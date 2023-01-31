@@ -1,0 +1,416 @@
+:root{
+    --header-height: 60px;
+    --video-card-width: 300px;
+    --background-color: #333;
+    --hover-color: #444;
+    --svg-button-filter: invert(.75);
+    --standard-font-color: #ddd;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--background-color);
+    color: var(--standard-font-color);
+    font-family: 'Roboto', sans-serif;
+}
+
+/* ---- Global classes ---- */
+
+a, a:visited {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.svg-filter {
+    filter: var(--svg-button-filter);
+}
+
+#overlay {
+    position: fixed;
+    top: 0px; left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(0,0,0,0.7);
+}
+
+#top-header {
+    position: absolute;
+    top: 0; left: 0;
+    height: var(--header-height);
+    width: 100%;
+    background-color: #222;
+    z-index: 20;
+}
+
+#top-header > .left {
+    float: left;
+}
+
+#top-header > .right {
+    float: right;
+}
+
+#top-header .button {
+    margin: 5px;
+    height: calc(var(--header-height) - 30px);
+    width: calc(var(--header-height) - 30px);
+    cursor: pointer;
+    padding: 10px;
+    border: none;
+}
+
+#top-header .sidebar-button {
+    float: left;
+}
+
+#top-header .settings-button {
+    float: right;
+}
+
+#top-header .button img {
+    width: 100%;
+    height: 100%;
+    filter: var(--svg-button-filter);
+}
+
+#sidebar {
+    position: absolute;
+    top: var(--header-height);
+    width: 300px;
+    background-color: var(--background-color);
+    z-index: 30;
+    height: calc(100% - var(--header-height));
+    overflow-y: scroll;
+    transition: left .2s;
+}
+
+#sidebar .channel {
+    border: 0px solid black;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    height: 30px;
+    position: relative;
+}
+
+#sidebar .channel:hover {
+    background-color: var(--hover-color);
+}
+
+#sidebar .channel section.filter-click {
+    display: contents;
+}
+
+#sidebar .channel img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+#sidebar .channel span {
+    position: absolute;
+    top: 16px;
+    font-size: 15px;
+    margin-left: 10px;
+}
+
+.scrollable-content {
+    position: absolute;
+    top: var(--header-height); left: 0;
+    height: calc(100vh - var(--header-height));
+    width: 100%;
+    overflow-y : scroll;
+}
+
+.scrollable-content .content {
+    width: calc(100vw - 20px);
+    max-width: 1280px;
+    margin: auto;
+}
+
+.scrollable-content .filter-header {
+    padding: 10px;
+}
+
+.scrollable-content .filter-header button{
+    border: 2px solid #222;
+    border-radius: 10px;
+    padding: 10px 20px;
+    background-color: #444;
+    color: var(--standard-font-color);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.scrollable-content .filter-header button:hover:enabled {
+    background-color: #555;
+}
+
+.scrollable-content .filter-header button:disabled {
+    color: #888;
+    cursor: default;
+}
+
+.scrollable-content .filter-header .last-updated {
+    float: right;
+    font-size: 12px;
+    font-weight: normal;
+    margin-top: 12px;
+}
+
+#videos-container {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 10px;
+}
+
+.video {
+    flex: 0 0 var(--video-card-width);
+    width: var(--video-card-width);
+    padding: 10px;
+    border: 0px solid black;
+    border-radius: 5px;
+}
+
+.video:hover {
+    background: #444;
+}
+
+.video .supertitle {
+    margin-bottom: 5px;
+    float: left;
+    width: 100%;
+}
+
+.video .channel-thumbnail {
+    float: left;
+    height: 20px;
+    width: 20px;
+    border-radius: 50%;
+}
+
+.video .video-channel-name {
+    margin: 0 5px; 
+    float: left;
+    width: calc(100% - 50px);
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: 14px;
+    margin-top: 1px; 
+}
+
+.video .provider-favicon {
+    height: 20px;
+    width: 20px;
+    float: right;
+}
+
+.video .video-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;  
+    overflow: hidden;
+    font-size: 15px;
+    color: #fff;
+    margin-top: 5px;
+}
+
+.video .video-img-container {
+    width: var(--video-card-width);
+    height: calc(var(--video-card-width) / 16 * 9 - 10px);
+    overflow: hidden;
+    background-color: #444;
+    position: relative;
+}
+
+.video .video-thumbnail {
+    transition: all .2s;
+    width: 100%;
+    height: 100%;
+}
+
+.video .video-runtime {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 4px;
+    font-size: 12px;
+}
+
+.video .video-upload-date {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 4px;
+    font-size: 12px;
+}
+
+.video:hover .video-thumbnail {
+    transform: scale(1.05);
+}
+
+.modal {
+    background-color: #333;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    border: 1px solid black;
+    border-radius: 20px;
+    min-height: 200px;
+    min-width: 400px;
+    z-index: 100;
+}
+
+.modal-close {
+    position: relative;
+    float: right;
+    right: 20px; top: 12px;
+    width: 20px; height: 20px;
+    cursor: pointer;
+}
+
+.modal-content {
+    margin: 50px 20px 20px 20px;
+}
+
+/*  ---- Login Box ---- */
+
+.login-box {
+    width: 300px;
+    height: 400px;
+    margin: calc(50vh - 200px) auto auto auto;
+}
+
+/* ---- Logo with text ---- */
+
+
+.logo-with-text {
+    display: block;
+    height: 40px;
+    width: 140px;
+}
+
+.logo-with-text img {
+    width: 40px;
+    height: 100%;
+}
+
+.logo-with-text span {
+    font-size: 18px;
+    font-weight: bold;
+    position: relative;
+    bottom: calc(100% - 27px);
+    left: 8px;
+}
+
+/* ---- Forms ---- */
+
+.form .title {
+    font-size: 18px;
+    padding: 5px;
+    font-weight: bold;
+}
+
+.form label {
+    display: block;
+    font-size: 12px;
+    margin-left: 6px;
+    color: #888;
+}
+
+.form input, .form button {
+    box-sizing: border-box;
+    padding: 10px;
+    background-color: #444;
+    color: var(--standard-font-color);
+    border: 0px solid black;
+    border-radius: 10px;
+    margin: 5px 0px;
+}
+
+.form input:focus, .form button:focus {
+    outline: none;
+}
+
+.form input[type=text], .form input[type=password] {
+    width: 100%;
+}
+
+.form input[type=submit]:enabled, .form button:enabled {
+    cursor: pointer;
+}
+
+.form input[type=submit]:disabled, .form button:disabled {
+    color: #888;
+}
+
+.form input[type=submit].submit, .form button.submit {
+    font-weight: bold;
+}
+
+.form .spinner {
+    width: 32px; height: 32px;
+    padding: 7px;
+}
+
+.form .spinner img {
+    width: 100%; height: 100%;
+}
+
+.form .warning-text {
+    font-size: 12px;
+    color: #d92316;
+}
+
+/* ---- noscript stuff ---- */
+
+#noscript {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: #333;
+    z-index: 10000;
+}
+
+#noscript div.middle {
+    width: 250px;
+    margin: calc(50vh - 200px) auto auto auto;
+    color: #ddd !important;
+}
+
+#noscript a {
+    text-decoration: underline;
+}
+
+#noscript .logo {
+    margin-left: 50px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+#noscript .logo img {
+    width: 40px; height: 40px;
+}
+
+#noscript .logo span {
+    position: relative;
+    margin-left: 10px;
+    top: -10px;
+}
+
+/* fix for video thumbnails being wrong aspect ratio */
+img.video-thumbnail {
+    object-fit: cover;
+}

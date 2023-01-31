@@ -1,0 +1,212 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>abokist.de</title>
+        <link rel="icon" type="image/svg+xml" href="{% static 'assets/logo.svg' %}">
+        <!-- Vue JS -->
+        <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+        <script src="https://cdn.jsdelivr.net/vue.resource/1.0.3/vue-resource.min.js"></script>
+
+        <!-- Axios -->
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+        <link rel="stylesheet" href="{% static 'main.css' %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+        <!-- Roboto Font -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
+
+        <!-- preload -->
+        <link rel="preload" href="{% static 'assets/logo_animated.svg' %}" as="image" type="image/svg+xml" />
+
+    </head>
+    <body>
+        <!-- noscript -->
+        <div id="noscript">
+            <div class="middle">
+                <script>document.querySelector("#noscript .middle").style.display = 'none';</script>
+                <div class="logo">
+                    <img src="{% static 'assets/logo.svg' %}">
+                    <span>abokist.de</span>
+                </div>
+                <span>
+                    It's 2021, please enable JavaScript and use a supported browser.<br><br>
+                    <a href="https://www.mozilla.org/de/firefox/new/">Firefox</a><br>
+                    <a href="https://www.google.com/intl/de_de/chrome/">Chrome</a><br>
+                    <a href="https://www.microsoft.com/de-de/edge">Edge</a><br>
+                </span>
+            </div>
+        </div>
+        <!-- app -->
+        <div id="app" style="display: none;">
+            <template>
+                <div v-if="!logged_in && logged_in != -1">
+                    <user-login v-if="!add_user"></user-login>
+                    <add-user v-if="add_user"></add-user>
+                </div>
+
+                <div v-if="logged_in && logged_in != -1">
+                    <div 
+                        id="overlay"
+                        :style="sidebar || modal ? 'visibility:visible' : 'visibility:hidden'"
+                        v-on:click="sidebar = false">
+                    </div>
+
+                    <div id="top-header">
+                        <div
+                            v-on:click="sidebar = !sidebar"
+                            v-on:tap="sidebar = !sidebar"
+                            class="sidebar-button button">
+                            <img :src="sidebar ? '{% static  'assets/x.svg' %}' : '{% static 'assets/hamburger.svg' %}'">
+                        </div>
+                        <div
+                            v-on:click="settings = !settings"
+                            v-on:tap="settings = !settings"
+                            class="settings-button button">
+                            <img :src="settings ? '{% static 'assets/x.svg' %}' : '{% static 'assets/settings.svg' %}'">
+                        </div>
+                        <div class="button" style="float:right" v-on:click="userlogout()">Logout</div>
+                    </div>
+
+                    <div id="sidebar" :style="sidebar ? 'left: 0px' : 'left: -300px'">
+                        <a style="cursor: pointer">
+                            <div class="channel" v-on:click="modal = true; sidebar = false">
+                                <plus-button></plus-button>
+                                <span>Add a channel</span>
+                            </div>
+                        </a>
+                        <a v-for="channel in loaded_data.channels" style="cursor: pointer">
+                            <div class="channel">
+                                <section class="filter-click" v-on:click="videoFilter = channel.name; sidebar = false">
+                                    <img :src="[[channel.thumbnail]]">
+                                    <span>[[channel.name]]</span>
+                                </section>
+                                <img v-on:click="deleteChannel(channel)" style="float: right" class="svg-filter" src="{% static 'assets/x.svg' %}">
+                            </div>
+                        </a>
+                    </div>
+        
+                    <div class="scrollable-content">
+
+                        <div v-if="settings" class="content">
+                            Settings
+                        </div>
+
+                        <div v-if="!settings" class="content">
+                            <div class="filter-header">
+                                <button v-on:click="updateBackend();" :disabled="updating">Update</button>
+                                <button v-on:click="modal=true">+ Add channel</button>
+                                <span v-if="videoFilter">|</span>
+                                <button v-if="videoFilter" v-on:click="videoFilter = ''">[[videoFilter]] x</button>
+                                <span class="last-updated">last updated: [[loaded_data.lastUpdated]]</span>
+                            </div>
+
+                            <div id="videos-container">
+                                <video-card v-for="video in loaded_data.videos" v-if="!videoFilter || video.channelName == videoFilter" v-bind:key="video.rowid"
+                                    v-bind:channel-thumbnail="video.channelThumbnail"
+                                    v-bind:channel-name="video.channelName"
+                                    v-bind:provider-thumbnail="loaded_data.providerFavicons[video.provider]"
+                                    v-bind:video-url="video.url"
+                                    v-bind:video-title="video.title"
+                                    v-bind:video-thumbnail="video.thumbnail"
+                                    v-bind:video-runtime="video.runtime"
+                                    v-bind:video-upload-date="video.timeSincePublished"
+                                ></video-card>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="modal" class="modal">
+                        <div class="modal-close" v-on:click="modal = false">
+                            <x-button></x-button>
+                        </div>
+                        <div class="modal-content">
+                            <add-channel></add-channel>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <!-- end of #app -->
+
+        <template id="template-video-card">
+            <div class="video">
+                <a :href="videoUrl" target="_blank">
+                    <div class="supertitle">
+                        <img class="channel-thumbnail" :src="channelThumbnail">
+                        <div class="video-channel-name">[[channelName]]</div>
+                        <img class="provider-favicon" :src="providerThumbnail">
+                    </div>
+                    <div class="video-img-container">
+                        <img class="video-thumbnail" loading="lazy" :src="videoThumbnail">
+                        <div class="video-runtime">[[runtimeString]]</div>
+                        <div class="video-upload-date">[[uploadDateString]]</div>
+                    </div>
+                    <div class="video-title">[[videoTitle]]</div>
+                </a>
+            </div>
+        </template>
+
+        <template id="template-user-login" style="display:none">
+            <div class="login-box">
+                <logo-text style="margin: auto;"></logo-text>
+                <span class="form">
+                    <div class="title">Sign in:</div>
+                    <label>Username:</label>
+                    <input type="text" ref="username" autofocus autocomplete="off">
+                    <label>Password:</label>
+                    <input v-on:keyup.enter="userlogin();" type="password" ref="password">
+                    <label class="warning-text" v-html="warningText"></label>
+                    <button v-on:click="userlogin();" style="float:right" class="submit">Sign in!</button>
+                    <button @click="$root.add_user = true" style="float:left">Create account</button>
+                    <span v-if="submitting" class="spinner" style="float:right"><img src="{% static 'assets/logo_animated.svg' %}"></span>
+                </span>
+            </div>
+        </template>
+
+        <template id="template-add-user" style="display:none">
+            <div class="login-box">
+                <logo-text style="margin: auto;"></logo-text>
+                <span class="form">
+                    <div class="title">Create account:</div>
+                    <label>Username:</label>
+                    <input type="text" ref="username" autofocus autocomplete="off">
+                    <label>Password:</label>
+                    <input type="password" ref="password1">
+                    <label>repeat password:</label>
+                    <input v-on:keyup.enter="adduser();" type="password" ref="password2">
+                    <label class="warning-text" v-html="warningText"></label>
+                    <button v-on:click="adduser();" style="float:right" class="submit">Create user</button>
+                    <button v-on:click="$root.add_user = false" style="float: left">back to login</button>
+                    <span v-if="submitting" class="spinner" style="float:right"><img src="{% static 'assets/logo_animated.svg' %}"></span>
+                </span>
+            </div>
+        </template>
+
+        <template id="template-add-channel" style="display:none">
+            <span class="form">
+                <div class="title">Add YouTube channel:</div>
+                <label>URL to YouTube channel</label>
+                <input type="text" v-model="urlinput" ref="url" name="url" autocomplete="off">
+                <button style="float:right" v-on:click="submit" :disabled="!urlinput || submitting">Add channel</button>
+                <span v-if="submitting" class="spinner" style="float:right"><img src="{% static 'assets/logo_animated.svg' %}"></span>
+            </span>
+        </template>
+
+        <template id="template-logo-text" style="display:none">
+            <div class="logo-with-text">
+                <img src="{% static 'assets/logo.svg' %}">
+                <span>abokist.de</span>
+            </div>
+        </template>
+        <script>{% include 'abokistde/main.js' %}</script>
+        <script>
+            // if vue did not execute successfully show error
+            if (window.vueloaded != "loaded") {
+                document.querySelector('#noscript .middle').style.display = "block";
+            }
+        </script>
+    </body>
+</html>
