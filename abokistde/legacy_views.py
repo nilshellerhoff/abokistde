@@ -13,7 +13,7 @@ from django.forms.models import model_to_dict
 import json
 
 from datetime import datetime, timedelta, timezone
-
+import time
 import uuid
 
 from django.views.decorators.csrf import csrf_exempt
@@ -76,33 +76,38 @@ WHERE u.id = %s
 def insert_channel(request):
     request_body = json.loads(request.body)
     channel_url = request_body['channel_url']
-    channel_data = sites_wrapper.getChannelInfo(channel_url)
+    channel = sites_wrapper.getChannelInfo(channel_url)
 
-    print(channel_data)
-
-    if channel_data is None:
-        response = {
-            "status": "error",
-            "message": "Channel not found"
-        }
-        return JsonResponse(response, status=400)
-       
-    if PublishingChannel.objects.filter(channel_id=channel_data['channel_id']).exists():
-        channel = PublishingChannel.objects.get(channel_id=channel_data['channel_id'])
-        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-        return HttpResponseRedirect('/')
-    
-    else:
-        channel = PublishingChannel.objects.create(
-            name=channel_data['name'],
-            channel_id=channel_data['channel_id'],
-            url=channel_data['url'],
-            thumbnail_url=channel_data['thumbnail'],
-            provider=channel_data['provider']
-        )
+    if channel:
         UserSubscription.objects.create(user=request.user, publishing_channel=channel)
         sites_wrapper.getNewEpisodes()
         return HttpResponseRedirect('/')
+
+    # if channel_data is None:
+    #     response = {
+    #         "status": "error",
+    #         "message": "Channel not found"
+    #     }
+    #     return JsonResponse(response, status=400)
+       
+    # # channel, _ = PublishingChannel.objects.update_or_create()
+
+    # if PublishingChannel.objects.filter(channel_id=channel_data['channel_id']).exists():
+    #     channel = PublishingChannel.objects.get(channel_id=channel_data['channel_id'])
+    #     UserSubscription.objects.create(user=request.user, publishing_channel=channel)
+    #     return HttpResponseRedirect('/')
+    
+    # else:
+    #     channel = PublishingChannel.objects.create(
+    #         name=channel_data['name'],
+    #         channel_id=channel_data['channel_id'],
+    #         url=channel_data['url'],
+    #         thumbnail_url=channel_data['thumbnail'],
+    #         provider=channel_data['provider']
+    #     )
+    #     UserSubscription.objects.create(user=request.user, publishing_channel=channel)
+    #     sites_wrapper.getNewEpisodes()
+    #     return HttpResponseRedirect('/')
 
 @csrf_exempt
 def delete_channel(request):
@@ -196,9 +201,21 @@ def user_add(request):
 
 @csrf_exempt
 def search(request):
-    searchterm = request.GET.get('query')
-    results = [c.toDict() for c in sites_wrapper.search(searchterm)]
+    time.sleep(1)
+    query = request.GET.get('query')
+    results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)]
     return JsonResponse({
         "status": "success",
         "data": results
+    })
+
+
+@csrf_exempt
+def search_online(request):
+    searchterm = request.GET.get('query')
+    results = [c.toDict() for c in sites_wrapper.search(searchterm)]
+    results2 = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=searchterm)]
+    return JsonResponse({
+        "status": "success",
+        "data": results + results2
     })

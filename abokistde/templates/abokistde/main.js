@@ -1,4 +1,83 @@
 {% load static %}
+Vue.component('searchfield', {
+    delimiters : ['[[', ']]'],
+    template : '#template-searchfield',
+    data() {
+        return {
+            query: '',
+            searchResults: [],
+            isSearching: false,
+        }
+    },
+    computed: {
+        showResults: function() {
+            if (this.query.trim() == '') {
+                return false
+            } else {
+                return true
+            }
+        }
+    },
+    methods: {
+        search: function() {
+            if (this.query.trim() == '') {
+                this.searchResults = []
+            } else {
+                this.isSearching = true;
+                axios({
+                    method: 'get',
+                    url : "{% url 'home' %}search",
+                    params: {
+                        'query': this.query.trim()
+                    }
+                }).then((resp) => {
+                    this.searchResults = resp.data.data
+                    this.isSearching = false
+                }).catch(() => {
+                    this.isSearching = false
+                })
+            }
+        },
+        searchOnline: function() {
+            if (this.query.trim() == '') {
+                this.searchResults = []
+            } else {
+                this.isSearching = true;
+                axios({
+                    method: 'get',
+                    url : "{% url 'home' %}search_online",
+                    params: {
+                        'query': this.query.trim()
+                    }
+                }).then((resp) => {
+                    this.searchResults = resp.data.data
+                    this.isSearching = false
+                }).catch(() => {
+                    this.isSearching = false
+                })
+            }
+        },
+        addChannel : async function(result) {
+            await new Promise(r => setTimeout(r, 200));
+            this.isSearching = true
+            axios({
+                method : 'post',
+                url : '{% url "home" %}api/insert_channel',
+                data : {
+                    login_token : this.$parent.login_token,
+                    channel_url : result.url,
+                }
+            }).then(() => {
+                this.$root.fetchData();
+                this.isSearching = false;
+                this.query = '';
+            }).catch(() => {
+                this.isSearching = false;
+            })
+        }
+    }
+});
+
 Vue.component('x-button', {
     template : `
         <img class="svg-filter" src="{% static 'assets/plus.svg' %}" style="transform: rotate(45deg); width: 100%; height: 100%;">

@@ -61,13 +61,20 @@
                             class="sidebar-button button">
                             <img :src="sidebar ? '{% static  'assets/x.svg' %}' : '{% static 'assets/hamburger.svg' %}'">
                         </div>
+                        <searchfield></searchfield>
                         <div
+                            v-on:click="userlogout"
+                            v-on:tap="userlogout"
+                            class="settings-button button">
+                            <img src="{% static 'assets/logout.svg' %}">
+                        </div>
+                        {% comment %} <div
                             v-on:click="settings = !settings"
                             v-on:tap="settings = !settings"
                             class="settings-button button">
                             <img :src="settings ? '{% static 'assets/x.svg' %}' : '{% static 'assets/settings.svg' %}'">
-                        </div>
-                        <div class="button" style="float:right" v-on:click="userlogout()">Logout</div>
+                        </div> {% endcomment %}
+                        {% comment %} <div class="button" style="float:right" v-on:click="userlogout()">Logout</div> {% endcomment %}
                     </div>
 
                     <div id="sidebar" :style="sidebar ? 'left: 0px' : 'left: -300px'">
@@ -130,6 +137,36 @@
             </template>
         </div>
         <!-- end of #app -->
+
+        <template id="template-searchfield">
+            <div class="searchfield-container">
+                <input
+                    class="searchfield-input"
+                    type="text"
+                    v-model="query"
+                    @input="search"
+                />
+                <div v-if="isSearching" class="searchfield-spinner">
+                    <img src="{% static 'assets/logo_animated.svg' %}">
+                </div>
+                <div v-if="!isSearching && query.length > 0" class="searchfield-spinner">
+                    <img class="svg-filter" src="{% static 'assets/x.svg' %}" @click="query = ''">
+                </div>
+                <div class="searchfield-results" :style="showResults ? `display: block` : `display: none`">
+                    <div v-for="result in searchResults.slice(0,8)">
+                        <div class="searchfield-result">
+                            [[result.name]]
+                            <button class="searchfield-add-button" @click="addChannel(result)">add</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="searchfield-search-online">
+                            <button class="searchfield-add-button" style="left: 0px" @click="searchOnline">Search online</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
 
         <template id="template-video-card">
             <div class="video">

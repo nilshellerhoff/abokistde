@@ -12,4 +12,5 @@ urlpatterns = [
     path('api/insert_channel', views.insert_channel, name='insert_channel'),
     path('api/delete_channel', views.delete_channel, name='delete_channel'),
     path('search', views.search, name='search'),
+    path('search_online', views.search_online, name='search_online'),
 ]

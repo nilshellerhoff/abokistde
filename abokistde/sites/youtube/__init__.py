@@ -23,6 +23,20 @@ class Youtube:
 
         return channels
 
+    def getChannelInfo(self, url):
+        j = JsonScraper()
+        channel = j.getChannelDetails(url)
+        return PublishingChannel.objects.update_or_create(
+            channel_id = channel["channel_id"],
+            defaults= {
+                "name": channel["name"],
+                "description": channel["description"],
+                "url": channel["url"],
+                "channel_id": channel["channel_id"],
+                "thumbnail_url": channel["thumbnail_url"],
+            }
+        )[0]
+
     def getVideos(self, channel):
         """
         Returns the latest videos, currently 15 using the rss api

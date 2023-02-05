@@ -414,3 +414,93 @@ a, a:visited {
 img.video-thumbnail {
     object-fit: cover;
 }
+
+.searchfield-container {
+    height: 50px;
+    padding: 5px;
+    margin: 0px;
+    max-width: calc(100% - 170px);
+    width: 600px;
+    float: left;
+    position: relative;
+}
+
+.searchfield-input {
+    height: 46px;
+    width: 100%;
+    margin: 0px;
+    padding: 0 20px;
+    color: #fff;
+    font-size: 20px;
+    background-color: #555;
+    border: 2px solid #777;
+    border-radius: 20px;
+}
+
+.searchfield-input:focus {
+    border: 2px solid #999;
+    outline: none;
+}
+
+.searchfield-spinner {
+    position: absolute;
+    right: -20px;
+    top: 10px;
+    height: 40px;
+    width: 40px;
+}
+
+.searchfield-spinner img {
+    width: 100%;
+    height: 100%;   
+}
+
+.searchfield-results {
+    position: absolute;
+    background-color: #555;
+    width: 100%;
+    z-index: -1;
+    top: 25px;
+    border: 2px solid #777;
+    width: 100%;
+    padding: 40px 15px 15px 15px;
+    border-radius: 20px;
+}
+
+.searchfield-result {
+    height: 30px;
+    font-size: 20px;
+    color: #fff;
+    padding: 5px;
+    margin-left: 15px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.searchfield-result:hover {
+    background-color: #888;
+}
+
+.searchfield-search-online {
+    height: 30px;
+    font-size: 20px;
+    color: #fff;
+    padding: 5px;
+    margin-left: 15px;
+    border-radius: 5px;
+    position: relative;
+}
+
+.searchfield-container button {
+    border: 2px solid #222;
+    border-radius: 10px;
+    padding: 5px 10px;
+    background-color: #444;
+    color: var(--standard-font-color);
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    top: 3px;
+    right: 3px;
+}

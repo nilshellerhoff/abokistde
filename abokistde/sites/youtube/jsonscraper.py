@@ -88,11 +88,20 @@ class JsonScraper:
         self.url = f"https://www.youtube.com/results?search_query={query}"
         self.getJson()
 
-        videoItems = self.json["contents"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
-        byLineTexts = videoItems.map(lambda x: x["videoWithContextRenderer"]["shortBylineText"]["runs"][0])
+        sections = self.json["contents"]["sectionListRenderer"]["contents"].filter(lambda x: "itemSectionRenderer" in x.keys())
+        channels = []
 
-        return [{
-            "name": x["text"],
-            "url": x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
-            "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
-        } for x in byLineTexts]
+        for section in sections:
+            section = NestedObject(section)
+            videoItems = section["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
+            byLineTexts = videoItems.map(lambda x: x["videoWithContextRenderer"]["shortBylineText"]["runs"][0])
+
+            for idx, x in enumerate(byLineTexts):
+                if x["text"] not in [c["name"] for c in channels]:
+                    channels.append({
+                        "name": x["text"],
+                        "url": "https://youtube.com/" + x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
+                        "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                    })
+
+        return channels
