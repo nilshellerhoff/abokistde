@@ -48,6 +48,6 @@ class Episode(models.Model):
     def __str__(self):
         return self.publishing_channel.name + ': ' + self.title
 
-class UserSubscriptions(models.Model):
+class UserSubscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     publishing_channel = models.ForeignKey(PublishingChannel, on_delete=models.CASCADE)

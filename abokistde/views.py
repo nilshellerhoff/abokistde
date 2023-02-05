@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 from django.core.exceptions import ValidationError
 
-from .models import Episode, PublishingChannel, UserSubscriptions
+from .models import Episode, PublishingChannel, UserSubscription
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation, authenticate, login, logout
 

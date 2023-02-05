@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 from django.core.exceptions import ValidationError
 
-from .models import Episode, PublishingChannel, UserSubscriptions
+from .models import Episode, PublishingChannel, UserSubscription
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation, authenticate, login, logout
 
@@ -27,11 +27,11 @@ def videos(request):
     print(request.user.id)
 
     # TODO get this to work
-    # videos = Episode.objects.filter(publishing_channel__user_subscriptions__in=UserSubscriptions.objects.filter(user=request.user)).order_by('-published')
+    # videos = Episode.objects.filter(publishing_channel__usersusbscription__in=UserSubscription.objects.filter(user=request.user)).order_by('-published')
     videos_ids = Episode.objects.raw("""
 SELECT e.id FROM abokistde_episode e
 INNER JOIN abokistde_publishingchannel c ON e.publishing_channel_id = c.id
-INNER JOIN abokistde_usersubscriptions us ON c.id = us.publishing_channel_id
+INNER JOIN abokistde_usersubscription us ON c.id = us.publishing_channel_id
 INNER JOIN auth_user u ON us.user_id = u.id
 WHERE u.id = %s
     """ % request.user.id)
@@ -52,7 +52,7 @@ WHERE u.id = %s
 
     channels_ids = PublishingChannel.objects.raw("""
 SELECT c.id FROM abokistde_publishingchannel c
-INNER JOIN abokistde_usersubscriptions us ON c.id = us.publishing_channel_id
+INNER JOIN abokistde_usersubscription us ON c.id = us.publishing_channel_id
 INNER JOIN auth_user u ON us.user_id = u.id
 WHERE u.id = %s
 """ % request.user.id)
@@ -89,7 +89,7 @@ def insert_channel(request):
        
     if PublishingChannel.objects.filter(channel_id=channel_data['channel_id']).exists():
         channel = PublishingChannel.objects.get(channel_id=channel_data['channel_id'])
-        UserSubscriptions.objects.create(user=request.user, publishing_channel=channel)
+        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
         return HttpResponseRedirect('/')
     
     else:
@@ -100,7 +100,7 @@ def insert_channel(request):
             thumbnail_url=channel_data['thumbnail'],
             provider=channel_data['provider']
         )
-        UserSubscriptions.objects.create(user=request.user, publishing_channel=channel)
+        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
         sites_wrapper.getNewEpisodes()
         return HttpResponseRedirect('/')
 
@@ -110,7 +110,7 @@ def delete_channel(request):
     print(request.body)
     channel_id = request_body['channelid']
     channel = PublishingChannel.objects.get(pk=channel_id)
-    UserSubscriptions.objects.get(user=request.user, publishing_channel=channel).delete()
+    UserSubscription.objects.get(user=request.user, publishing_channel=channel).delete()
     return JsonResponse({ "status": "success", "message": "Channel deleted" }, status=200)
 
 @csrf_exempt
