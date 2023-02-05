@@ -98,10 +98,13 @@ class JsonScraper:
 
             for idx, x in enumerate(byLineTexts):
                 if x["text"] not in [c["name"] for c in channels]:
-                    channels.append({
-                        "name": x["text"],
-                        "url": "https://youtube.com/" + x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
-                        "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
-                    })
+                    try:
+                        channels.append({
+                            "name": x["text"],
+                            "url": "https://youtube.com/" + x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
+                            "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                        })
+                    except:
+                        pass
 
         return channels
