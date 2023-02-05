@@ -11,16 +11,15 @@ class Youtube:
     def searchChannel(self, query):
         j = JsonScraper()
         channels = []
-        for channel in j.search(query):
+        for channel in j.searchChannel(query):
             channels.append(PublishingChannel.objects.update_or_create(
                 channel_id = channel["channel_id"],
                 defaults = dict(
                     name = channel["name"],
-                    thumbnail = channel["thumbnail"],
                     url = channel["url"],
                     provider = "youtube",
                 )
-            ))
+            )[0])
 
         return channels
 
@@ -42,6 +41,6 @@ class Youtube:
                     published = video["published"],
                     type = "video",
                 )
-            ))
+            )[0])
         
         return videos

@@ -17,3 +17,8 @@ def getNewEpisodes():
 def getChannelInfo(url : str):
     """get the channel info from the given url"""
     return youtube.getChannelInfo(url)
+
+def search(query : str):
+    """Search for a query"""
+    youtube = Youtube()
+    return youtube.searchChannel(query)

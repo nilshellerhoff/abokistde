@@ -193,3 +193,12 @@ def user_add(request):
             "message": "Something went wrong"
         }
         return JsonResponse(response, status=400)
+
+@csrf_exempt
+def search(request):
+    searchterm = request.GET.get('query')
+    results = [c.toDict() for c in sites_wrapper.search(searchterm)]
+    return JsonResponse({
+        "status": "success",
+        "data": results
+    })

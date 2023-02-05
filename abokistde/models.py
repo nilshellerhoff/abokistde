@@ -18,6 +18,16 @@ class PublishingChannel(models.Model):
     def __str__(self):
         return self.name + ' - ' + self.provider
 
+    def toDict(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "url": self.url,
+            "channel_id": self.channel_id,
+            "thumbnail_url": self.thumbnail_url,
+            "provider": self.provider,
+        }
+
 class Episode(models.Model):
     # Title of the episode
     title = models.CharField(max_length=200)

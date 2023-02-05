@@ -94,5 +94,5 @@ class JsonScraper:
         return [{
             "name": x["text"],
             "url": x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
-            "id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
+            "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
         } for x in byLineTexts]

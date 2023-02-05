@@ -11,4 +11,5 @@ urlpatterns = [
     path('user/add', views.user_add, name='user_add'),
     path('api/insert_channel', views.insert_channel, name='insert_channel'),
     path('api/delete_channel', views.delete_channel, name='delete_channel'),
+    path('search', views.search, name='search'),
 ]
