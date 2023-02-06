@@ -20,6 +20,11 @@ Vue.component('searchfield', {
             }
         }
     },
+    watch: {
+        query: function() {
+            this.searchTimeout()
+        }
+    },
     methods: {
         search: function() {
             if (this.query.trim() == '') {
