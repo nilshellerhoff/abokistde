@@ -140,10 +140,12 @@
 
         <template id="template-searchfield">
             <div class="searchfield-container">
+                {% comment %} https://github.com/vuejs/vue/issues/9299#issuecomment-481530279 {% endcomment %}
                 <input
                     class="searchfield-input"
                     type="text"
-                    v-model="query"
+                    :value="query"
+                    @input="evt => query = evt.target.value"
                 />
                 <div v-if="isSearching" class="searchfield-spinner">
                     <img src="{% static 'assets/logo_animated.svg' %}">
