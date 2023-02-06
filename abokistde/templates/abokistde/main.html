@@ -144,7 +144,7 @@
                     class="searchfield-input"
                     type="text"
                     v-model="query"
-                    @input="search"
+                    @keyup="searchTimeout"
                 />
                 <div v-if="isSearching" class="searchfield-spinner">
                     <img src="{% static 'assets/logo_animated.svg' %}">

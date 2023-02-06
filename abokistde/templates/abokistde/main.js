@@ -7,6 +7,8 @@ Vue.component('searchfield', {
             query: '',
             searchResults: [],
             isSearching: false,
+            timer: null,
+            searchDelay: 500,
         }
     },
     computed: {
@@ -56,6 +58,15 @@ Vue.component('searchfield', {
                     this.isSearching = false
                 })
             }
+        },
+        searchTimeout: function() {  
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            this.timer = setTimeout(() => {
+                this.search()
+            }, this.searchDelay);
         },
         addChannel : async function(result) {
             await new Promise(r => setTimeout(r, 200));
