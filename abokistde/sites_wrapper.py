@@ -11,7 +11,7 @@ def getNewEpisodes():
     channels_watched = getWatchedChannels()
     yt = Youtube()
     for channel in channels_watched:
-        if channel.provider.technical_name == 'youtube':
+        if channel.provider.extractor == 'youtube':
             yt.getVideos(channel)
 
 def getChannelInfo(url : str):

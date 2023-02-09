@@ -2,22 +2,22 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Provider(models.Model):
-    # technical name of the provider (e.g. 'youtube')
-    technical_name = models.CharField(max_length=200)
     # display name of the provider (e.g. 'YouTube')
-    display_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     # URL to the provider's website
     url = models.URLField()
     # icon URL
     icon_url = models.URLField()
+    # extractor: which module is used to extract the data from the provider
+    extractor = models.CharField(max_length=200)
 
     def __str__(self):
-        return self.display_name
+        return self.name
 
     def toDict(self):
         return {
-            "technical_name": self.technical_name,
-            "display_name": self.display_name,
+            "ectractor": self.extractor,
+            "name": self.name,
             "url": self.url,
             "icon_url": self.icon_url
         }
@@ -37,7 +37,7 @@ class PublishingChannel(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return self.name + ' - ' #+ self.provider.technical_name
+        return self.name + ' - ' + self.provider.name
 
     def toDict(self):
         return {
