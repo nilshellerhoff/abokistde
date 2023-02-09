@@ -156,7 +156,8 @@
                 <div class="searchfield-results" :style="showResults ? `display: block` : `display: none`">
                     <div v-for="result in searchResults.slice(0,8)">
                         <div class="searchfield-result">
-                            [[result.name]]
+                            <img :src="result.provider.icon_url">
+                            <span>[[result.name]]</span>
                             <button class="searchfield-add-button" @click="addChannel(result)">add</button>
                         </div>
                     </div>
