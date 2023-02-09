@@ -1,4 +1,4 @@
-from abokistde.models import PublishingChannel, Episode, User
+from abokistde.models import PublishingChannel, Episode, User, Provider
 import xmltodict
 import requests
 from .jsonscraper import JsonScraper
@@ -6,7 +6,7 @@ from .rss import RssFeed
 
 class Youtube:
     def __init__(self):
-        pass
+        self.provider = Provider.objects.filter(technical_name = 'youtube')[0]
 
     def searchChannel(self, query):
         j = JsonScraper()
@@ -17,7 +17,7 @@ class Youtube:
                 defaults = dict(
                     name = channel["name"],
                     url = channel["url"],
-                    provider = "youtube",
+                    provider = self.provider
                 )
             )[0])
 

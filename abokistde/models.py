@@ -1,6 +1,27 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Provider(models.Model):
+    # technical name of the provider (e.g. 'youtube')
+    technical_name = models.CharField(max_length=200)
+    # display name of the provider (e.g. 'YouTube')
+    display_name = models.CharField(max_length=200)
+    # URL to the provider's website
+    url = models.URLField()
+    # icon URL
+    icon_url = models.URLField()
+
+    def __str__(self):
+        return self.display_name
+
+    def toDict(self):
+        return {
+            "technical_name": self.technical_name,
+            "display_name": self.display_name,
+            "url": self.url,
+            "icon_url": self.icon_url
+        }
+
 class PublishingChannel(models.Model):
     # Name as displayed on the website
     name = models.CharField(max_length=200)
@@ -13,10 +34,10 @@ class PublishingChannel(models.Model):
     # URL to a thumbnail image of the channel
     thumbnail_url = models.URLField(null=True, blank=True)
     # Provider of the channel as technical name (e.g. 'youtube')
-    provider = models.CharField(max_length=200)
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
-        return self.name + ' - ' + self.provider
+        return self.name + ' - ' #+ self.provider.technical_name
 
     def toDict(self):
         return {
@@ -25,7 +46,7 @@ class PublishingChannel(models.Model):
             "url": self.url,
             "channel_id": self.channel_id,
             "thumbnail_url": self.thumbnail_url,
-            "provider": self.provider,
+            "provider": self.provider.toDict()
         }
 
 class Episode(models.Model):

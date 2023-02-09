@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 from django.core.exceptions import ValidationError
 
-from .models import Episode, PublishingChannel, UserSubscription
+from .models import Episode, PublishingChannel, UserSubscription, Provider
 from django.contrib.auth.models import User
 from django.contrib.auth import password_validation, authenticate, login, logout
 
@@ -44,7 +44,7 @@ WHERE u.id = %s
         v1['channelName'] = v2.publishing_channel.name
         v1['channelThumbnail'] = v2.publishing_channel.thumbnail_url
         v1['channelid'] = v2.publishing_channel.channel_id
-        v1['provider'] = v2.publishing_channel.provider
+        v1['provider'] = v2.publishing_channel.provider.technical_name
         v1['runtime'] = v2.duration
         v1['video_page_url'] = v2.thumbnail_url
         v1['timeSincePublished'] = int((datetime.now(timezone.utc) - v2.published).total_seconds())
@@ -64,7 +64,11 @@ WHERE u.id = %s
         c1['thumbnail'] = c2.thumbnail_url
         c1['video_page_url'] = c2.url
         
-    provider_favicons = { 'youtube': 'https://www.youtube.com/s/desktop/9528aa7e/img/favicon_32.png' }
+    # provider_favicons = { 'youtube': 'https://www.youtube.com/s/desktop/9528aa7e/img/favicon_32.png' }
+    providers = Provider.objects.all()
+    provider_names = [p.technical_name for p in providers]
+    provider_icons = [p.icon_url for p in providers]
+    provider_favicons = { k: v for (k,v) in zip(provider_names, provider_icons)}
     results = {
         'videos': videos_list,
         'channels': channels_list,
@@ -201,7 +205,6 @@ def user_add(request):
 
 @csrf_exempt
 def search(request):
-    time.sleep(1)
     query = request.GET.get('query')
     results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)]
     return JsonResponse({
