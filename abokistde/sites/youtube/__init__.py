@@ -10,7 +10,7 @@ class Youtube:
             name = "Youtube",
             defaults = dict(
                 url = "https://www.youtube.com/",
-                icon_url = "https://www.youtube.com/s/desktop/2a8e8c9c/img/favicon_32.png",
+                icon_url = "https://www.youtube.com/s/desktop/5191a190/img/favicon_144x144.png",
                 extractor = Extractor.objects.get(name='youtube')
             )
         )
