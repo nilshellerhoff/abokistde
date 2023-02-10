@@ -1,6 +1,7 @@
 from abokistde.sites import youtube
 from .models import PublishingChannel, Extractor
 from abokistde.sites.youtube import Youtube
+from abokistde.sites.ardaudiothek import Ardaudiothek
 
 def getWatchedChannels():
     """Get all channels that are watched"""
@@ -30,3 +31,6 @@ def fetch_data(extractor: Extractor):
         yt = Youtube()
         for channel in getWatchedChannels():
             yt.getVideos(channel)
+    if extractor.name == 'ardaudiothek':
+        aa = Ardaudiothek()
+        aa.getChannels()
