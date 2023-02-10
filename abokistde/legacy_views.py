@@ -44,7 +44,7 @@ WHERE u.id = %s
         v1['channelName'] = v2.publishing_channel.name
         v1['channelThumbnail'] = v2.publishing_channel.thumbnail_url
         v1['channelid'] = v2.publishing_channel.channel_id
-        v1['provider'] = v2.publishing_channel.provider.extractor
+        v1['provider'] = v2.publishing_channel.provider.extractor.name
         v1['runtime'] = v2.duration
         v1['video_page_url'] = v2.thumbnail_url
         v1['timeSincePublished'] = int((datetime.now(timezone.utc) - v2.published).total_seconds())
@@ -66,7 +66,7 @@ WHERE u.id = %s
         
     # provider_favicons = { 'youtube': 'https://www.youtube.com/s/desktop/9528aa7e/img/favicon_32.png' }
     providers = Provider.objects.all()
-    provider_names = [p.extractor for p in providers]
+    provider_names = [p.extractor.name for p in providers]
     provider_icons = [p.icon_url for p in providers]
     provider_favicons = { k: v for (k,v) in zip(provider_names, provider_icons)}
     results = {

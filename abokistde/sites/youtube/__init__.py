@@ -6,7 +6,7 @@ from .rss import RssFeed
 
 class Youtube:
     def __init__(self):
-        self.provider = Provider.objects.filter(extractor = 'youtube')[0]
+        self.provider = Provider.objects.filter(extractor__name = 'youtube')[0]
 
     def searchChannel(self, query):
         j = JsonScraper()

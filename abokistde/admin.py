@@ -1,6 +1,6 @@
 from django.contrib import admin
-
-from .models import PublishingChannel, Episode, Provider
+from .models import PublishingChannel, Episode, Provider, Extractor
+from abokistde import sites_wrapper
 
 class VideoInline(admin.TabularInline):
     model = Episode
@@ -9,6 +9,16 @@ class VideoInline(admin.TabularInline):
 class PublishingChannelAdmin(admin.ModelAdmin):
     inlines = [VideoInline]
     model = PublishingChannel
+
+def fetch_data(modeladmin, request, queryset):
+    for extractor in queryset:
+        sites_wrapper.fetch_data(extractor)
+
+class ExtractorAdmin(admin.ModelAdmin):
+    model = Extractor
+    actions = [fetch_data]
+
+admin.site.register(Extractor, ExtractorAdmin)
 
 admin.site.register(Provider)
 admin.site.register(PublishingChannel, PublishingChannelAdmin)

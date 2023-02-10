@@ -1,6 +1,12 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class Extractor(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.name
+    
 class Provider(models.Model):
     # display name of the provider (e.g. 'YouTube')
     name = models.CharField(max_length=200)
@@ -9,14 +15,14 @@ class Provider(models.Model):
     # icon URL
     icon_url = models.URLField()
     # extractor: which module is used to extract the data from the provider
-    extractor = models.CharField(max_length=200)
+    extractor = models.ForeignKey(Extractor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
     def toDict(self):
         return {
-            "ectractor": self.extractor,
+            "extractor": self.extractor.name,
             "name": self.name,
             "url": self.url,
             "icon_url": self.icon_url
