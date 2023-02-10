@@ -493,6 +493,10 @@ img.video-thumbnail {
     text-align: center;
     vertical-align: middle;
     margin-top: -10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: calc(100% - 100px);
+    white-space: nowrap;
 }
 
 .searchfield-search-online {
