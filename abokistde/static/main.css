@@ -467,6 +467,11 @@ img.video-thumbnail {
     border-radius: 20px;
 }
 
+.searchfield-results-inner {
+    max-height: calc(min(100vh - 100px, 600px));
+    overflow-y: scroll;
+}
+
 .searchfield-result {
     height: 30px;
     font-size: 20px;

@@ -154,11 +154,13 @@
                     <img class="svg-filter" src="{% static 'assets/x.svg' %}" @click="query = ''">
                 </div>
                 <div class="searchfield-results" :style="showResults ? `display: block` : `display: none`">
-                    <div v-for="result in searchResults.slice(0,8)">
-                        <div class="searchfield-result">
-                            <img :src="result.provider.icon_url">
-                            <span>[[result.name]]</span>
-                            <button class="searchfield-add-button" @click="addChannel(result)">add</button>
+                    <div class="searchfield-results-inner">
+                        <div v-for="result in searchResults">
+                            <div class="searchfield-result">
+                                <img :src="result.provider.icon_url">
+                                <span>[[result.name]]</span>
+                                <button class="searchfield-add-button" @click="addChannel(result)">add</button>
+                            </div>
                         </div>
                     </div>
                     <div>
