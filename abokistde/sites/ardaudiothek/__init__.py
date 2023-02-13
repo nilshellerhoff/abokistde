@@ -7,5 +7,17 @@ class Ardaudiothek:
         pass
     
     def getChannels(self):
-        graphql = GraphQlClient()
-        graphql.getChannels()
+        try:
+            graphql = GraphQlClient()
+            return graphql.getChannels()
+        except Exception as e:
+            print(e)
+            return []
+
+    def getEpisodes(self, publishing_channel):
+        try:
+            graphql = GraphQlClient()
+            return graphql.getEpisodes(publishing_channel)
+        except Exception as e:
+            print(e)
+            return []

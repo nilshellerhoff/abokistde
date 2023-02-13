@@ -10,6 +10,7 @@ urlpatterns = [
     path('user/check_token', views.user_checktoken, name='user_checktoken'),
     path('user/add', views.user_add, name='user_add'),
     path('api/insert_channel', views.insert_channel, name='insert_channel'),
+    path('api/insert_channel_by_id', views.insert_channel_by_id, name='insert_channel_by_id'),
     path('api/delete_channel', views.delete_channel, name='delete_channel'),
     path('search', views.search, name='search'),
     path('search_online', views.search_online, name='search_online'),

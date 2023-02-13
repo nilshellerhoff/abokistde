@@ -87,31 +87,17 @@ def insert_channel(request):
         sites_wrapper.getNewEpisodes()
         return HttpResponseRedirect('/')
 
-    # if channel_data is None:
-    #     response = {
-    #         "status": "error",
-    #         "message": "Channel not found"
-    #     }
-    #     return JsonResponse(response, status=400)
-       
-    # # channel, _ = PublishingChannel.objects.update_or_create()
+@csrf_exempt
+def insert_channel_by_id(request):
+    request_body = json.loads(request.body)
+    channel_id = request_body['channel_id']
+    channel = PublishingChannel.objects.get(channel_id=channel_id)
 
-    # if PublishingChannel.objects.filter(channel_id=channel_data['channel_id']).exists():
-    #     channel = PublishingChannel.objects.get(channel_id=channel_data['channel_id'])
-    #     UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-    #     return HttpResponseRedirect('/')
-    
-    # else:
-    #     channel = PublishingChannel.objects.create(
-    #         name=channel_data['name'],
-    #         channel_id=channel_data['channel_id'],
-    #         url=channel_data['url'],
-    #         thumbnail_url=channel_data['thumbnail'],
-    #         provider=channel_data['provider']
-    #     )
-    #     UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-    #     sites_wrapper.getNewEpisodes()
-    #     return HttpResponseRedirect('/')
+    if channel:
+        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
+        sites_wrapper.getNewEpisodes()
+        return HttpResponseRedirect('/')
+
 
 @csrf_exempt
 def delete_channel(request):

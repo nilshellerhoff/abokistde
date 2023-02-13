@@ -78,10 +78,10 @@ Vue.component('searchfield', {
             this.isSearching = true
             axios({
                 method : 'post',
-                url : '{% url "home" %}api/insert_channel',
+                url : '{% url "home" %}api/insert_channel_by_id',
                 data : {
                     login_token : this.$parent.login_token,
-                    channel_url : result.url,
+                    channel_id : result.channel_id,
                 }
             }).then(() => {
                 this.$root.fetchData();

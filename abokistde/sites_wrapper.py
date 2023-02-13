@@ -11,9 +11,12 @@ def getNewEpisodes():
     """Get new episodes from all sites"""
     channels_watched = getWatchedChannels()
     yt = Youtube()
+    aa = Ardaudiothek()
     for channel in channels_watched:
         if channel.provider.extractor.name == 'youtube':
             yt.getVideos(channel)
+        if channel.provider.extractor.name == 'ardaudiothek':
+            aa.getEpisodes(channel)
 
 def getChannelInfo(url : str):
     """get the channel info from the given url"""
