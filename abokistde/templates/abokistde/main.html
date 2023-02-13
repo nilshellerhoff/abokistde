@@ -141,6 +141,9 @@
         <template id="template-searchfield">
             <div class="searchfield-container">
                 {% comment %} https://github.com/vuejs/vue/issues/9299#issuecomment-481530279 {% endcomment %}
+                <div class="searchfield-icon">
+                    <img class="svg-filter" src="{% static 'assets/search.svg' %}">
+                </div>
                 <input
                     class="searchfield-input"
                     type="text"

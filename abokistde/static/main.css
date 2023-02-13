@@ -427,9 +427,9 @@ img.video-thumbnail {
 
 .searchfield-input {
     height: 46px;
-    width: 100%;
+    width: calc(100% - 40px);
     margin: 0px;
-    padding: 0 20px;
+    padding: 0 20px 0 60px;
     color: #fff;
     font-size: 20px;
     background-color: #555;
@@ -440,6 +440,20 @@ img.video-thumbnail {
 .searchfield-input:focus {
     border: 2px solid #999;
     outline: none;
+}
+
+.searchfield-icon {
+    position: absolute;
+    left: 20px;
+    top: 15px;
+    height: 30px;
+    width: 40px;
+}
+
+.searchfield-icon img {
+    width: 100%;
+    height: 100%;
+    color: 
 }
 
 .searchfield-spinner {
