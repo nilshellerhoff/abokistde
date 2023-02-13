@@ -66,7 +66,7 @@ class GraphQlClient:
 query getEpisodes ($channel_id: Int!) {
     programSets (filter: { id: { equalTo: $channel_id }}) {
         nodes {
-            items (orderBy: PUBLISH_DATE_DESC first: 20) {nodes{
+            items (orderBy: PUBLISH_DATE_DESC first: 20 filter: { isPublished: {equalTo: true}}) {nodes{
                 title
                 synopsis
                 sharingUrl
