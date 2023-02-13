@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PublishingChannel, Episode, Provider, Extractor
+from .models import PublishingChannel, Episode, Provider, Extractor, UserSubscription
 from abokistde import sites_wrapper
 
 class VideoInline(admin.TabularInline):
@@ -9,6 +9,7 @@ class VideoInline(admin.TabularInline):
 class PublishingChannelAdmin(admin.ModelAdmin):
     inlines = [VideoInline]
     model = PublishingChannel
+    search_fields = ['name', 'provider__name']
 
 def fetch_data(modeladmin, request, queryset):
     for extractor in queryset:
@@ -19,7 +20,7 @@ class ExtractorAdmin(admin.ModelAdmin):
     actions = [fetch_data]
 
 admin.site.register(Extractor, ExtractorAdmin)
-
 admin.site.register(Provider)
 admin.site.register(PublishingChannel, PublishingChannelAdmin)
 admin.site.register(Episode)
+admin.site.register(UserSubscription)
