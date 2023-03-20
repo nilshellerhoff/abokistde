@@ -2,6 +2,7 @@ from abokistde.sites import youtube
 from .models import PublishingChannel, Extractor
 from abokistde.sites.youtube import Youtube
 from abokistde.sites.ardaudiothek import Ardaudiothek
+from abokistde.sites.mediathekview import Mediathekview
 
 def getWatchedChannels():
     """Get all channels that are watched"""
@@ -23,6 +24,10 @@ def getChannelInfo(url : str):
     youtube = Youtube()
     return youtube.getChannelInfo(url)
 
+def updateChannelInfo():
+    """update the saved channels and check if there are new"""
+
+
 def search(query : str):
     """Search for a query"""
     youtube = Youtube()
@@ -37,3 +42,6 @@ def fetch_data(extractor: Extractor):
     if extractor.name == 'ardaudiothek':
         aa = Ardaudiothek()
         aa.getChannels()
+    if extractor.name == 'mediathekview':
+        mv = Mediathekview()
+        mv.getChannels()
