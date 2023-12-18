@@ -1,0 +1,20 @@
+{
+  "short_name": "abokist.de",
+  "name": "abokist.de",
+  "icons": [
+    {
+      "src": "assets/favicons/favicon_32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/favicons/favicon_128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "../",
+  "display": "standalone",
+  "theme_color": "#cccccc",
+  "background_color": "#333333"
+}

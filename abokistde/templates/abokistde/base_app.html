@@ -6,6 +6,17 @@
   <meta charset="utf-8">
   <meta name="viewport"
         content="width=device-width, initial-scale=1">
+  <link rel="icon"
+        type="image/png"
+        href="{% static 'assets/favicons/favicon_32x32.png' %}"
+        sizes="32x32">
+  <link rel="icon"
+        type="image/png"
+        href="{% static 'assets/favicons/favicon_128x128.png' %}"
+        sizes="128x128">
+  <link rel="manifest"
+        href="{%  static 'manifest.json' %}">
+
   <title>{% block title %}My amazing site{% endblock %}</title>
 
   <!-- lodash -->
