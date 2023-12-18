@@ -17,8 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from . import legacy_urls
-from graphene_django.views import GraphQLView
-from django.contrib.auth import views as auth_views
+# from graphene_django.views import GraphQLView
 
 
 urlpatterns = [
