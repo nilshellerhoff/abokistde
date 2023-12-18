@@ -21,7 +21,7 @@ from . import legacy_urls
 
 
 urlpatterns = [
-    # path("accounts/", include("django.contrib.auth.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("account/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('', views.index, name="home"),
