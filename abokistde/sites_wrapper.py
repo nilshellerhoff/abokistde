@@ -3,16 +3,15 @@ from .models import PublishingChannel, Extractor
 from abokistde.sites.youtube import Youtube
 from abokistde.sites.ardaudiothek import Ardaudiothek
 
-def getWatchedChannels():
-    """Get all channels that are watched"""
-    return PublishingChannel.objects.filter(usersubscription__user__isnull=False).distinct()
-
-def getNewEpisodes():
+def getNewEpisodes(channel_id=None):
     """Get new episodes from all sites"""
-    channels_watched = getWatchedChannels()
+    if channel_id:
+        channels = [PublishingChannel.objects.get(pk=channel_id)]
+    else:
+        channels = PublishingChannel.objects.filter(usersubscription__user__isnull=False).distinct()
     yt = Youtube()
     aa = Ardaudiothek()
-    for channel in channels_watched:
+    for channel in channels:
         if channel.provider.extractor.name == 'youtube':
             yt.getVideos(channel)
         if channel.provider.extractor.name == 'ardaudiothek':

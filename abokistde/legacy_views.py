@@ -95,7 +95,7 @@ def insert_channel_by_id(request):
 
     if channel:
         UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-        sites_wrapper.getNewEpisodes()
+        sites_wrapper.getNewEpisodes(channel_id=channel.id)
         return HttpResponseRedirect('/')
 
 
@@ -192,7 +192,7 @@ def user_add(request):
 @csrf_exempt
 def search(request):
     query = request.GET.get('query')
-    results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)]
+    results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)[:100]]
     return JsonResponse({
         "status": "success",
         "data": results
@@ -203,8 +203,8 @@ def search(request):
 def search_online(request):
     searchterm = request.GET.get('query')
     results = [c.toDict() for c in sites_wrapper.search(searchterm)]
-    results2 = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=searchterm)]
+    results2 = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
     return JsonResponse({
         "status": "success",
-        "data": results + results2
+        "data": results2 + results
     })

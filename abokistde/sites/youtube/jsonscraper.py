@@ -96,13 +96,17 @@ class JsonScraper:
             videoItems = section["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
             byLineTexts = videoItems.map(lambda x: x["videoWithContextRenderer"]["shortBylineText"]["runs"][0])
 
-            for idx, x in enumerate(byLineTexts):
-                if x["text"] not in [c["name"] for c in channels]:
+            for idx, videoItem in enumerate(videoItems):
+                byLineText = videoItem["videoWithContextRenderer"]["shortBylineText"]["runs"][0]
+                if byLineText["text"] not in [c["name"] for c in channels]:
                     try:
+                        channelThumbnail = videoItem["videoWithContextRenderer"]["channelThumbnail"]
+                        thumbnail = channelThumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0]["url"]
                         channels.append({
-                            "name": x["text"],
-                            "url": "https://youtube.com/" + x["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
-                            "channel_id": x["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                            "name": byLineText["text"],
+                            "url": "https://youtube.com/" + byLineText["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
+                            "channel_id": byLineText["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                            "thumbnail_url": thumbnail,
                         })
                     except:
                         pass

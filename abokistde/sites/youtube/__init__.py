@@ -20,12 +20,13 @@ class Youtube:
             j = JsonScraper()
             channels = []
             for channel in j.searchChannel(query):
-                channels.append(PublishingChannel.objects.update_or_create(
+                    channels.append(PublishingChannel.objects.update_or_create(
                     channel_id = channel["channel_id"],
                     defaults = dict(
                         name = channel["name"],
                         url = channel["url"],
-                        provider = self.provider
+                        provider = self.provider,
+                        thumbnail_url = channel["thumbnail_url"]
                     )
                 )[0])
 

@@ -1,0 +1,87 @@
+{% load static %}
+{% load include_templates %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1">
+  <title>{% block title %}My amazing site{% endblock %}</title>
+
+  <!-- lodash -->
+  <script src="{% static 'lib/js/lodash@4.17.21.min.js' %}"></script>
+
+  <!-- vue -->
+  <script src="{% static 'lib/js/vue@3.3.9.global.js' %}"></script>
+
+  <!-- material icons -->
+  <link href="{% static 'lib/css/materialdesignicons@4.9.95.min.css' %}"
+        rel="stylesheet"/>
+  <!-- vuetifjs labs -->
+  <link href="{% static 'lib/css/vuetify-labs@3.3.17.min.css' %}"
+        rel="stylesheet"/>
+  <script src="{% static 'lib/js/vuetify-labs@3.3.17.min.js' %}"></script>
+
+  <!-- Axios -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+
+<!-- declare window scoped variables -->
+{% block variables %}{% endblock %}
+
+<!-- app root -->
+<span id="app">
+    {% block body %}<h1>Hello, world!</h1>{% endblock %}
+</span>
+
+<!-- create vue app and add vuetify -->
+<script>
+  const app = Vue.createApp({
+    delimiters: ['[[', ']]'],
+    compilerOptions: {
+      delimiters: ['[[', ']]'],
+      comments: true
+    },
+  });
+  const vuetify = Vuetify.createVuetify({
+    theme: {
+      themes: {
+        light: {
+          colors: {
+            primary: '#424242',
+            secondary: '#E0E0E0'
+          }
+        },
+        dark: {
+          colors: {
+            primary: '#ff0000',
+            secondary: '#00ff00'
+          }
+        }
+      },
+    },
+  })
+  app.use(vuetify);
+</script>
+
+<!-- components (include app.component calls) -->
+{% include "./vue_components/app_bar.vue" %}
+{% include "./vue_components/episode_card.vue" %}
+{% include "./vue_components/channel_list.vue" %}
+{% include "./vue_components/refresh_button.vue" %}
+{% include "./vue_components/dark_theme_toggle.vue" %}
+{% include "./vue_components/channel_filter_button.vue" %}
+{% include "./vue_components/episode_overview.vue" %}
+{% include "./vue_components/add_channel_button.vue" %}
+{% include "./vue_components/remove_channel_button.vue" %}
+{% include "./vue_components/github_link.vue" %}
+
+<script>
+  // mount global variables so they can be used to pass data from BE to FE
+  app.config.globalProperties.window = window;
+  app.mount('#app');
+</script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{% extends 'abokistde/base_app.html' %}
+{% load variable %}
+
+{% block variables %}
+    {{ channels|variable:"channels" }}
+{% endblock %}
+
+{% block body %}
+  <v-card style="min-height: 100vh">
+    <v-layout style="height: 100%">
+      <app-bar title="{% block title %}{% endblock %}"></app-bar>
+      <v-main>
+        <v-card-text style="height: 100%; max-width: 1200px; margin: 0 auto">
+          {% block content %}{% endblock %}
+        </v-card-text>
+      </v-main>
+    </v-layout>
+  </v-card>
+{% endblock %}
