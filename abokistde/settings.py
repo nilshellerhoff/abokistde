@@ -38,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'abokistde',
-    'graphene_django',
-    'livereload',
+    # 'graphene_django',
+    # 'livereload',
 ]
 
 MIDDLEWARE = [
