@@ -105,8 +105,8 @@ const channelList = {
         method: 'get',
         url: "/api/user_subscription/",
       }).then((response) => {
-        this.subscriptions = response.data
-        this.channels = response.data.map(s => s.publishing_channel)
+        this.subscriptions = response.data.results
+        this.channels = response.data.results.map(s => s.publishing_channel)
       }).finally(() => {
         this.isLoading--;
       })
@@ -122,7 +122,7 @@ const channelList = {
             'search': this.searchValue.trim()
           }
         }).then((response) => {
-          this.searchResults = response.data
+          this.searchResults = response.data.results
         }).finally(() => {
           this.isSearching = false
         })
@@ -141,8 +141,8 @@ const channelList = {
           params: {
             'query': this.searchValue.trim()
           }
-        }).then((resp) => {
-          this.searchResults = resp.data.data
+        }).then((response) => {
+          this.searchResults = response.data.data
           this.isSearching = false
         }).catch(() => {
           this.isSearching = false

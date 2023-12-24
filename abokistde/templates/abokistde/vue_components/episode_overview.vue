@@ -14,7 +14,7 @@
     </div>
     <div v-else>
       <v-row dense>
-        <v-col v-for="episode in episodes"
+        <v-col v-for="episode in episodes.slice(0, 200)"
                :key="episode.id"
                :cols="12 / amountOfCols"
                :style="!channelFilter || episode.publishing_channel.id == channelFilter.id ? 'display: block' : 'display: none'"
@@ -53,18 +53,28 @@ const episodeOverview = {
         method: 'get',
         url: "/api/publishing_channel_user",
       }).then((response) => {
-        this.channels = response.data
+        this.channels = response.data.results
       }).finally(() => {
         this.isLoading--;
       })
     },
     fetchEpisodes() {
       this.isLoading++;
+
+      let query_params = {}
+
+      if (this.channelFilter) {
+        query_params = {
+          publishing_channel: this.channelFilter.id
+        }
+      }
+
       axios({
         method: 'get',
-        url: "/api/episode_user",
+        url: "/api/episode_user/",
+        params: query_params,
       }).then((response) => {
-        this.episodes = response.data
+        this.episodes = response.data.results
       }).finally(() => {
         this.isLoading--;
       })
@@ -73,6 +83,11 @@ const episodeOverview = {
   mounted() {
     this.fetchChannels()
     this.fetchEpisodes()
+  },
+  watch: {
+    channelFilter: function () {
+      this.fetchEpisodes()
+    }
   }
 }
 app.component("episodeOverview", episodeOverview)
