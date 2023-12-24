@@ -189,14 +189,14 @@ def user_add(request):
         }
         return JsonResponse(response, status=400)
 
-@csrf_exempt
-def search(request):
-    query = request.GET.get('query')
-    results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)[:100]]
-    return JsonResponse({
-        "status": "success",
-        "data": results
-    })
+# @csrf_exempt
+# def search(request):
+#     query = request.GET.get('query')
+#     results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)[:100]]
+#     return JsonResponse({
+#         "status": "success",
+#         "data": results
+#     })
 
 
 @csrf_exempt

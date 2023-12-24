@@ -23,4 +23,4 @@ class EpisodeUserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Episode.objects.filter(publishing_channel__usersubscription__user=self.request.user).order_by(
-            "-published").distinct()[:500]
+            "-published").distinct()[:200]

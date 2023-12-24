@@ -115,14 +115,13 @@ const channelList = {
         this.isSearching = true;
         axios({
           method: 'get',
-          url: "/search",
+          url: "/api/publishing_channel",
           params: {
-            'query': this.searchValue.trim()
+            'search': this.searchValue.trim()
           }
-        }).then((resp) => {
-          this.searchResults = resp.data.data
-          this.isSearching = false
-        }).catch(() => {
+        }).then((response) => {
+          this.searchResults = response.data
+        }).finally(() => {
           this.isSearching = false
         })
       }

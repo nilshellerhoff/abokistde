@@ -14,7 +14,7 @@ class PublishingChannelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PublishingChannel.objects.all()
     serializer_class = PublishingChannelSerializer
     filterset_fields = ['name']
-    search_fields = ['name']
+    search_fields = ['name', 'description']
 
 
 class PublishingChannelUserViewSet(viewsets.ReadOnlyModelViewSet):
