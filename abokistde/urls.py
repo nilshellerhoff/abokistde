@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from . import legacy_urls
+from api.urls import urlpatterns as api_urlpatterns
 
 
 urlpatterns = [
@@ -27,5 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name="home"),
 ]
+
+urlpatterns += api_urlpatterns
 
 urlpatterns += legacy_urls.urlpatterns

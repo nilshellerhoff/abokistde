@@ -13,6 +13,10 @@
           class="px-2 pt-4"
       ></v-text-field>
     </template>
+    <div v-if="isLoading"
+         class="text-center">
+      <v-progress-circular indeterminate></v-progress-circular>
+    </div>
     <v-list>
       <v-list-item
           v-for="channel in channelsFiltered"
@@ -81,7 +85,8 @@ const channelList = {
   inject: ["channelFilter", "drawer"],
   data() {
     return {
-      channels: window.channels,
+      channels: [],
+      isLoading: 0,
       searchResults: [],
       searchValue: "",
       isSearching: false,
@@ -93,6 +98,17 @@ const channelList = {
     }
   },
   methods: {
+    fetchChannels() {
+      this.isLoading++;
+      axios({
+        method: 'get',
+        url: "/api/publishing_channel_user",
+      }).then((response) => {
+        this.channels = response.data
+      }).finally(() => {
+        this.isLoading--;
+      })
+    },
     search() {
       this.searchResults = []
       if (this.searchValue.trim() !== '') {
@@ -135,6 +151,9 @@ const channelList = {
     setChannelFilter(channel) {
       this.channelFilter = channel;
     }
+  },
+  mounted() {
+    this.fetchChannels()
   }
 }
 

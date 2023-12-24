@@ -22,12 +22,6 @@ const appBar = {
   delimiters: ['[[', ']]'],
   props: ['title'],
   inject: ['drawer'],
-  data() {
-    return {
-      channels: window.channels,
-    }
-  },
-  computed: {}
 }
 
 app.component('appBar', appBar);

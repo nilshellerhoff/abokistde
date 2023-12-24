@@ -5,8 +5,8 @@
           target="_blank"
   >
     <div class="pa-2 text-truncate">
-      <v-avatar :image="episode.publishing_channel__thumbnail_url" size="20"></v-avatar>
-      [[ episode.publishing_channel__name ]]
+      <v-avatar :image="episode.publishing_channel.thumbnail_url" size="20"></v-avatar>
+      [[ episode.publishing_channel.name ]]
     </div>
     <v-img
         :src="episode.thumbnail_url"
