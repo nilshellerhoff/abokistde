@@ -67,6 +67,7 @@
         <template v-slot:append>
           <add-channel-button
               :channel="channel"
+              :disabled="subscriptions.find(s => s.publishing_channel.id === channel.id)"
           ></add-channel-button>
         </template>
       </v-list-item>
