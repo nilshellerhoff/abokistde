@@ -7,15 +7,17 @@ from api.views.publishing_channel import PublishingChannelSerializer
 
 class EpisodeSerializer(serializers.ModelSerializer):
     publishing_channel = PublishingChannelSerializer(many=False)
+
     class Meta:
         model = Episode
         fields = ['id', 'title', 'description', 'thumbnail_url', 'url', 'publishing_channel']
 
 
 class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Episode.objects.all()
+    queryset = Episode.objects.all()[:200]
     serializer_class = EpisodeSerializer
     filterset_fields = ['publishing_channel']
+
 
 class EpisodeUserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EpisodeSerializer
@@ -24,4 +26,4 @@ class EpisodeUserViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return Episode.objects.filter(publishing_channel__usersubscription__user=self.request.user).order_by(
-            "-published").distinct()
+            "-published").distinct()[:200]
