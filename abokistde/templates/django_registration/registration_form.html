@@ -2,20 +2,12 @@
 
 {% block content %}
   {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-  {% endif %}
-
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-    {% else %}
-      <p>Please login to see this page.</p>
-    {% endif %}
+    There were errors registering your account:
+    <div class="ml-8">{{ form.errors }}</div>
   {% endif %}
 
   <form method="post"
-        action="{% url 'login' %}">
+        action="{% url 'django_registration_register' %}">
     {% csrf_token %}
 
     <v-text-field
@@ -23,16 +15,29 @@
             label="Username"
             type="text"
     ></v-text-field>
+{#    <v-text-field#}
+{#            name="email"#}
+{#            label="Email (optional)"#}
+{#            type="email"#}
+{#    >#}
+{#    </v-text-field>#}
+    <input type="hidden" name="email" value="fake@example.org">
     <v-text-field
-            name="password"
+            name="password1"
             label="Password"
             type="password"
     >
     </v-text-field>
+    <v-text-field
+            name="password2"
+            label="Repeat Password"
+            type="password"
+    >
+    </v-text-field>
 
-    <v-btn
-            type="submit">Login
-    </v-btn>
+
+    <v-btn type="submit">Register</v-btn>
+
     <input type="hidden"
            name="next"
            value="{{ next }}">

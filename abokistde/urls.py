@@ -17,15 +17,15 @@ from django.contrib import admin
 from django.urls import path, include
 from . import views
 from . import legacy_urls
-# from graphene_django.views import GraphQLView
 
 
 urlpatterns = [
+    path('accounts/', include('django_registration.backends.one_step.urls')),
+    path('account/', include('django_registration.backends.one_step.urls')),
     path("accounts/", include("django.contrib.auth.urls")),
     path("account/", include("django.contrib.auth.urls")),
     path('admin/', admin.site.urls),
     path('', views.index, name="home"),
-    # path('graphql', GraphQLView.as_view(graphiql=True)),
 ]
 
 urlpatterns += legacy_urls.urlpatterns
