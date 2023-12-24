@@ -93,19 +93,31 @@ class JsonScraper:
 
         for section in sections:
             section = NestedObject(section)
-            videoItems = section["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
-            byLineTexts = videoItems.map(lambda x: x["videoWithContextRenderer"]["shortBylineText"]["runs"][0])
+            channel_items = section["itemSectionRenderer"]["contents"].filter(lambda x: "compactChannelRenderer" in x.keys())
+            video_items = section["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
 
-            for idx, videoItem in enumerate(videoItems):
-                byLineText = videoItem["videoWithContextRenderer"]["shortBylineText"]["runs"][0]
-                if byLineText["text"] not in [c["name"] for c in channels]:
+            for idx, channel_item in enumerate(channel_items):
+                try:
+                    renderer = channel_item["compactChannelRenderer"]
+                    channels.append({
+                        "name": renderer["displayName"]["runs"][0]["text"],
+                        "url": "https://youtube.com/" + renderer["navigationEndpoint"]["browseEndpoint"]["canonicalBaseUrl"],
+                        "channel_id": renderer["channelId"],
+                        "thumbnail_url": renderer["thumbnail"]["thumbnails"][-1]["url"],
+                    })
+                except:
+                    pass
+
+            for idx, video_item in enumerate(video_items):
+                by_line_text = video_item["videoWithContextRenderer"]["shortBylineText"]["runs"][0]
+                if by_line_text["text"] not in [c["name"] for c in channels]:
                     try:
-                        channelThumbnail = videoItem["videoWithContextRenderer"]["channelThumbnail"]
+                        channelThumbnail = video_item["videoWithContextRenderer"]["channelThumbnail"]
                         thumbnail = channelThumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0]["url"]
                         channels.append({
-                            "name": byLineText["text"],
-                            "url": "https://youtube.com/" + byLineText["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
-                            "channel_id": byLineText["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                            "name": by_line_text["text"],
+                            "url": "https://youtube.com/" + by_line_text["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
+                            "channel_id": by_line_text["navigationEndpoint"]["browseEndpoint"]["browseId"],
                             "thumbnail_url": thumbnail,
                         })
                     except:
