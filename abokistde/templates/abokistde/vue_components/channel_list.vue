@@ -82,7 +82,7 @@
 const channelList = {
   template: "#templateChannelList",
   delimiters: ['[[', ']]'],
-  inject: ["channelFilter", "drawer"],
+  inject: ["channelFilter", "drawer", "updateChannelsCounter"],
   data() {
     return {
       channels: [],
@@ -155,10 +155,17 @@ const channelList = {
   },
   mounted() {
     this.fetchSubscriptions()
+  },
+  watch: {
+    updateChannelsCounter: function () {
+      this.fetchSubscriptions()
+    }
   }
 }
 
 app.component("channelList", channelList)
 app.provide("channelFilter", Vue.ref(null))
 app.provide("drawer", Vue.ref(null))
+app.provide("updateEpisodesCounter", Vue.ref(0))
+app.provide("updateChannelsCounter", Vue.ref(0))
 </script>

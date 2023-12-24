@@ -30,7 +30,7 @@
 const episodeOverview = {
   template: '#templateEpisodeOverview',
   delimiters: ['[[', ']]'],
-  inject: ["channelFilter"],
+  inject: ["channelFilter", "updateEpisodesCounter", "updateChannelsCounter"],
   data() {
     return {
       isLoading: 0,
@@ -87,7 +87,13 @@ const episodeOverview = {
   watch: {
     channelFilter: function () {
       this.fetchEpisodes()
-    }
+    },
+    updateChannelsCounter: function () {
+      this.fetchChannels()
+    },
+    updateEpisodesCounter: function () {
+      this.fetchEpisodes()
+    },
   }
 }
 app.component("episodeOverview", episodeOverview)

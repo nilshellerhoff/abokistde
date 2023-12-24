@@ -9,6 +9,7 @@
 <script>
 const addChannelButton = {
   template: '#templateAddChannelButton',
+  inject: ["updateEpisodesCounter", "updateChannelsCounter"],
   props: ['channel'],
   data() {
     return {
@@ -26,7 +27,8 @@ const addChannelButton = {
         },
         headers: {"X-CSRFToken": window.csrftoken},
       }).then(() => {
-        location.reload()
+        this.updateEpisodesCounter++
+        this.updateChannelsCounter++
       }).finally(() => {
         this.loading = false;
       })

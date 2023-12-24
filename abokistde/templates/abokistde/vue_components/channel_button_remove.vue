@@ -1,8 +1,7 @@
 <template id="templateRemoveChannelButton">
   <v-btn
       icon="mdi-minus"
-      @click="removeChannel"
-      @click.prevent=""
+      @click.stop="removeChannel"
   ></v-btn>
 </template>
 
@@ -10,6 +9,7 @@
 const removeChannelButton = {
   template: '#templateRemoveChannelButton',
   props: ['subscription'],
+  inject: ["updateEpisodesCounter", "updateChannelsCounter"],
   data() {
     return {}
   },
@@ -22,7 +22,8 @@ const removeChannelButton = {
           url: `/api/user_subscription/${this.subscription.id}/`,
           headers: {"X-CSRFToken": window.csrftoken},
         }).then(() => {
-          location.reload()
+          this.updateEpisodesCounter++
+          this.updateChannelsCounter++
         }).finally(() => {
           this.loading = false;
         })
