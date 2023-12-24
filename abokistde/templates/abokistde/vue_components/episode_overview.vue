@@ -1,7 +1,7 @@
 <template id="templateEpisodeOverview">
   <div v-if="isLoading"
        class="text-center">
-    <v-progress-circular indeterminate></v-progress-circular>
+    <loading-indicator class="mx-auto my-16" style="width: 40px"></loading-indicator>
   </div>
   <div v-else>
     <div v-if="!channels || channels.length == 0"

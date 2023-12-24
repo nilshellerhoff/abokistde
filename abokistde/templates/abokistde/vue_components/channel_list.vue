@@ -15,7 +15,7 @@
     </template>
     <div v-if="isLoading"
          class="text-center">
-      <v-progress-circular indeterminate></v-progress-circular>
+      <loading-indicator class="mx-auto" style="width: 40px"></loading-indicator>
     </div>
     <v-list>
       <v-list-item
@@ -43,7 +43,7 @@
       <v-list-subheader>Search results</v-list-subheader>
       <v-list-item v-if="isSearching"
                    class="text-center">
-        <v-progress-circular indeterminate></v-progress-circular>
+        <loading-indicator class="mx-auto" style="width: 40px"></loading-indicator>
       </v-list-item>
       <v-list-item
           v-else

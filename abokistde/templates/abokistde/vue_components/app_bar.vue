@@ -5,12 +5,12 @@
   >
     <v-app-bar-nav-icon variant="text"
                         @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-
+      <img class="ml-2 py-4" style="height: 100%" src="/static/assets/logo.svg">
     <v-toolbar-title>[[ title ]]</v-toolbar-title>
     <v-spacer></v-spacer>
 <!--    <dark-theme-toggle></dark-theme-toggle>-->
 
-    <v-btn href="/accounts/logout" prepend-icon="mdi-logout">Logout</v-btn>
+    <v-btn href="/accounts/logout" icon="mdi-logout"></v-btn>
 
   </v-app-bar>
   <channel-list></channel-list>
