@@ -29,14 +29,25 @@
             type="password"
     >
     </v-text-field>
-
-    <v-btn
-            type="submit">Login
-    </v-btn>
     <input type="hidden"
            name="next"
            value="{{ next }}">
+
+    <v-row class="px-4 py-2">
+      <v-btn
+              type="submit"
+              color="primary">Login
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+              href="{% url 'django_registration_register' %}">
+        Register
+      </v-btn>
+    </v-row>
   </form>
+
+  <div class="pa-2">
+  </div>
 
   {# Assumes you set up the password_reset view in your URLconf #}
   {#    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
