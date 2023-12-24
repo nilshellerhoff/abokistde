@@ -9,32 +9,29 @@
 <script>
 const addChannelButton = {
   template: '#templateAddChannelButton',
-  props: ['channelId'],
+  props: ['channel'],
   data() {
     return {
       loading: false,
     }
   },
   methods: {
-    addChannel: async function (result) {
+    addChannel() {
       this.loading = true;
       axios({
         method: 'post',
-        url: '/api/insert_channel_by_id',
+        url: '/api/user_subscription/',
         data: {
-          channel_id: this.channelId,
-        }
+          publishing_channel_id: this.channel.id,
+        },
+        headers: {"X-CSRFToken": window.csrftoken},
       }).then(() => {
-        // this.loading = false
         location.reload()
-      }).catch(() => {
-        // this.loading = false;
+      }).finally(() => {
+        this.loading = false;
       })
     }
-
   }
 }
-
 app.component("addChannelButton", addChannelButton)
-
 </script>

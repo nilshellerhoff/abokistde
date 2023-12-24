@@ -9,25 +9,25 @@
 <script>
 const removeChannelButton = {
   template: '#templateRemoveChannelButton',
-  props: ['channel'],
+  props: ['subscription'],
   data() {
     return {}
   },
   methods: {
-    removeChannel: async function (result) {
-      if (confirm(`Remove ${this.channel.name} from subscriptions?`)) {
+    removeChannel() {
+      if (confirm(`Remove ${this.subscription.publishing_channel.name} from subscriptions?`)) {
+        this.loading = true;
         axios({
-          method: 'post',
-          url: '/api/delete_channel',
-          data: {
-            channelid: this.channel.id
-          }
+          method: 'delete',
+          url: `/api/user_subscription/${this.subscription.id}/`,
+          headers: {"X-CSRFToken": window.csrftoken},
         }).then(() => {
           location.reload()
-        });
+        }).finally(() => {
+          this.loading = false;
+        })
       }
     }
-
   }
 }
 app.component("removeChannelButton", removeChannelButton)

@@ -77,38 +77,6 @@ WHERE u.id = %s
     return JsonResponse(results)
 
 @csrf_exempt
-def insert_channel(request):
-    request_body = json.loads(request.body)
-    channel_url = request_body['channel_url']
-    channel = sites_wrapper.getChannelInfo(channel_url)
-
-    if channel:
-        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-        sites_wrapper.getNewEpisodes()
-        return HttpResponseRedirect('/')
-
-@csrf_exempt
-def insert_channel_by_id(request):
-    request_body = json.loads(request.body)
-    channel_id = request_body['channel_id']
-    channel = PublishingChannel.objects.get(channel_id=channel_id)
-
-    if channel:
-        UserSubscription.objects.create(user=request.user, publishing_channel=channel)
-        sites_wrapper.getNewEpisodes(channel_id=channel.id)
-        return HttpResponseRedirect('/')
-
-
-@csrf_exempt
-def delete_channel(request):
-    request_body = json.loads(request.body)
-    print(request.body)
-    channel_id = request_body['channelid']
-    channel = PublishingChannel.objects.get(pk=channel_id)
-    UserSubscription.objects.get(user=request.user, publishing_channel=channel).delete()
-    return JsonResponse({ "status": "success", "message": "Channel deleted" }, status=200)
-
-@csrf_exempt
 def fetch_youtube(request):
     sites_wrapper.getNewEpisodes()
     return HttpResponseRedirect('/')
@@ -189,22 +157,13 @@ def user_add(request):
         }
         return JsonResponse(response, status=400)
 
-# @csrf_exempt
-# def search(request):
-#     query = request.GET.get('query')
-#     results = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=query)[:100]]
-#     return JsonResponse({
-#         "status": "success",
-#         "data": results
-#     })
-
-
 @csrf_exempt
 def search_online(request):
     searchterm = request.GET.get('query')
-    results = [c.toDict() for c in sites_wrapper.search(searchterm)]
-    results2 = [c.toDict() for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
+    ids_online = sites_wrapper.search(searchterm)
+    ids_local = [c.id for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
+    results = list(PublishingChannel.objects.filter(id__in=ids_online).values())
     return JsonResponse({
         "status": "success",
-        "data": results2 + results
+        "data": results
     })

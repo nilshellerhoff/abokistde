@@ -19,21 +19,21 @@
     </div>
     <v-list>
       <v-list-item
-          v-for="channel in channelsFiltered"
-          :key="channel.id"
-          :value="channel"
+          v-for="subscription in subscriptionsFiltered"
+          :key="subscription.id"
+          :value="subscription"
           color="primary"
           class="pa-2"
-          @click="setChannelFilter(channel)"
+          @click="setChannelFilter(subscription.publishing_channel)"
       >
         <template v-slot:prepend>
-          <v-avatar :image="channel.thumbnail_url"
+          <v-avatar :image="subscription.publishing_channel.thumbnail_url"
                     icon="mdi-account-outline"></v-avatar>
         </template>
-        <v-list-item-title v-text="channel.name"></v-list-item-title>
+        <v-list-item-title v-text="subscription.publishing_channel.name"></v-list-item-title>
         <template v-slot:append>
           <remove-channel-button
-              :channel="channel"
+              :subscription="subscription"
           ></remove-channel-button>
         </template>
 
@@ -66,7 +66,7 @@
         <v-list-item-title v-text="channel.name"></v-list-item-title>
         <template v-slot:append>
           <add-channel-button
-              :channel-id="channel.channel_id"
+              :channel="channel"
           ></add-channel-button>
         </template>
       </v-list-item>
@@ -86,6 +86,7 @@ const channelList = {
   data() {
     return {
       channels: [],
+      subscriptions: [],
       isLoading: 0,
       searchResults: [],
       searchValue: "",
@@ -93,18 +94,19 @@ const channelList = {
     }
   },
   computed: {
-    channelsFiltered() {
-      return this.channels.filter(c => c.name.toLowerCase().includes(this.searchValue.toLowerCase()))
+    subscriptionsFiltered() {
+      return this.subscriptions.filter(s => s.publishing_channel.name.toLowerCase().includes(this.searchValue.toLowerCase()))
     }
   },
   methods: {
-    fetchChannels() {
+    fetchSubscriptions() {
       this.isLoading++;
       axios({
         method: 'get',
-        url: "/api/publishing_channel_user",
+        url: "/api/user_subscription/",
       }).then((response) => {
-        this.channels = response.data
+        this.subscriptions = response.data
+        this.channels = response.data.map(s => s.publishing_channel)
       }).finally(() => {
         this.isLoading--;
       })
@@ -152,7 +154,7 @@ const channelList = {
     }
   },
   mounted() {
-    this.fetchChannels()
+    this.fetchSubscriptions()
   }
 }
 
