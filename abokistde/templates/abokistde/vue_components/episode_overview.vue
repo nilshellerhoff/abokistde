@@ -1,4 +1,10 @@
 <template id="templateEpisodeOverview">
+  <v-row class="px-4">
+    <v-switch label="Show hidden episodes"
+              v-model="showHidden"
+              color="primary"
+    ></v-switch>
+  </v-row>
   <div v-if="!isLoading && (!channels || channels.length == 0)"
        class="text-center">
     <span class="text-h5">You don't have any channels yet.</span><br>
@@ -9,12 +15,14 @@
   </div>
   <div v-else>
     <v-row dense>
-      <v-col v-for="episode in episodes"
+      <v-col v-for="episode in episodesComputed"
              :key="episode.id"
              :cols="12 / amountOfCols"
              :style="!channelFilter || episode.publishing_channel.id == channelFilter.id ? 'display: block' : 'display: none'"
       >
-        <episode-card :episode="episode"></episode-card>
+        <episode-card
+            :episode="episode"
+            @hide-unhide-episode="hideUnhideEpisode"></episode-card>
       </v-col>
     </v-row>
   </div>
@@ -41,6 +49,7 @@ const episodeOverview = {
       pageSize: 48,
       episodes: [],
       channels: [],
+      showHidden: false,
     }
   },
   computed: {
@@ -49,6 +58,9 @@ const episodeOverview = {
       if (window.innerWidth > 1000) return 3
       if (window.innerWidth > 600) return 2
       return 1
+    },
+    episodesComputed() {
+      return this.episodes.filter(episode => this.showHidden || !episode.is_hidden)
     }
   },
   methods: {
@@ -72,7 +84,7 @@ const episodeOverview = {
       }
 
       if (this.channelFilter) {
-        query_params.publishing_channel = this.channelFilter.id
+        query_params.publishing_channel_id = this.channelFilter.id
       }
 
       axios({
@@ -92,6 +104,16 @@ const episodeOverview = {
     },
     resetChannels() {
       this.channels = []
+    },
+    hideUnhideEpisode(episode) {
+      const action = episode.is_hidden ? "unhide" : "hide"
+      axios({
+        method: 'post',
+        url: `/api/episode_user/${episode.id}/${action}/`,
+        headers: {"X-CSRFToken": window.csrftoken},
+      }).then((_) => {
+        episode.is_hidden = !episode.is_hidden
+      })
     }
   },
   mounted() {

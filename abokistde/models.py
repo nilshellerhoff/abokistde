@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Extractor(models.Model):
     name = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
-    
+
+
 class Provider(models.Model):
     # display name of the provider (e.g. 'YouTube')
     name = models.CharField(max_length=200)
@@ -27,6 +29,7 @@ class Provider(models.Model):
             "url": self.url,
             "icon_url": self.icon_url
         }
+
 
 class PublishingChannel(models.Model):
     # Name as displayed on the website
@@ -54,6 +57,7 @@ class PublishingChannel(models.Model):
             "thumbnail_url": self.thumbnail_url,
             "provider": self.provider.toDict()
         }
+
 
 class Episode(models.Model):
     # Title of the episode
@@ -85,9 +89,18 @@ class Episode(models.Model):
     def __str__(self):
         return self.publishing_channel.name + ': ' + self.title
 
+
 class UserSubscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     publishing_channel = models.ForeignKey(PublishingChannel, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.username + ' - ' + self.publishing_channel.name
+
+
+class HiddenEpisode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username + ' - ' + self.episode.title
