@@ -47,7 +47,9 @@ class JsonScraper:
         # if the string starts with a single quote, we need to decode the string
         if json[0] == "'":
             json = json[1:-1]
-            json = json.encode('utf-8').decode('unicode_escape')
+            # json = json.encode('utf-8').decode('unicode_escape')
+            # WHY Youtube?
+            json = json.encode('utf-8').decode('unicode_escape').encode('latin-1').decode('utf-8')
             json.replace("\/", "/")
 
         return json
