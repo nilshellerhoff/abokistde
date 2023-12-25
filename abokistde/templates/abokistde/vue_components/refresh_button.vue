@@ -11,6 +11,7 @@
 const refreshButton = {
   template: "#refreshButton",
   delimiters: ['[[', ']]'],
+  inject: ["updateEpisodesCounter"],
   data() {
     return {
       loading: false,
@@ -22,7 +23,8 @@ const refreshButton = {
       axios({
         url: '/fetch_youtube'
       }).then(() => {
-        location.reload()
+        this.updateEpisodesCounter++
+        this.loading = false
       });
     }
   }
