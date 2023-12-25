@@ -1,28 +1,31 @@
 <template id="templateEpisodeOverview">
-  <div v-if="isLoading"
+  <div v-if="!isLoading && (!channels || channels.length == 0)"
        class="text-center">
-    <loading-indicator class="mx-auto my-16" style="width: 40px"></loading-indicator>
+    <span class="text-h5">You don't have any channels yet.</span><br>
+    <span class="text-subtitle-1">Add your first in the sidebar to the left!</span>
+  </div>
+  <div v-else-if="!isLoading && (!episodes || episodes.length == 0)">
+    <span class="text-h5">No episodes found.</span>
   </div>
   <div v-else>
-    <div v-if="!channels || channels.length == 0"
-         class="text-center">
-      <span class="text-h5">You don't have any channels yet.</span><br>
-      <span class="text-subtitle-1">Add your first in the sidebar to the left!</span>
-    </div>
-    <div v-else-if="!episodes || episodes.length == 0">
-      <span class="text-h5">No episodes found.</span>
-    </div>
-    <div v-else>
-      <v-row dense>
-        <v-col v-for="episode in episodes.slice(0, 200)"
-               :key="episode.id"
-               :cols="12 / amountOfCols"
-               :style="!channelFilter || episode.publishing_channel.id == channelFilter.id ? 'display: block' : 'display: none'"
-        >
-          <episode-card :episode="episode"></episode-card>
-        </v-col>
-      </v-row>
-    </div>
+    <v-row dense>
+      <v-col v-for="episode in episodes"
+             :key="episode.id"
+             :cols="12 / amountOfCols"
+             :style="!channelFilter || episode.publishing_channel.id == channelFilter.id ? 'display: block' : 'display: none'"
+      >
+        <episode-card :episode="episode"></episode-card>
+      </v-col>
+    </v-row>
+  </div>
+  <div v-if="!isLoading"
+       class="text-center ma-16">
+    <v-btn @click="fetchEpisodes">Load more</v-btn>
+  </div>
+  <div v-if="isLoading"
+       class="text-center">
+    <loading-indicator class="mx-auto my-16"
+                       style="width: 40px"></loading-indicator>
   </div>
 </template>
 
@@ -34,6 +37,8 @@ const episodeOverview = {
   data() {
     return {
       isLoading: 0,
+      currentOffset: 0,
+      pageSize: 48,
       episodes: [],
       channels: [],
     }
@@ -61,12 +66,13 @@ const episodeOverview = {
     fetchEpisodes() {
       this.isLoading++;
 
-      let query_params = {}
+      let query_params = {
+        offset: this.currentOffset,
+        limit: this.pageSize,
+      }
 
       if (this.channelFilter) {
-        query_params = {
-          publishing_channel: this.channelFilter.id
-        }
+        query_params.publishing_channel = this.channelFilter.id
       }
 
       axios({
@@ -74,11 +80,19 @@ const episodeOverview = {
         url: "/api/episode_user/",
         params: query_params,
       }).then((response) => {
-        this.episodes = response.data.results
+        this.episodes = [...this.episodes, ...response.data.results]
+        this.currentOffset += this.pageSize
       }).finally(() => {
         this.isLoading--;
       })
     },
+    resetEpisodes() {
+      this.episodes = []
+      this.currentOffset = 0
+    },
+    resetChannels() {
+      this.channels = []
+    }
   },
   mounted() {
     this.fetchChannels()
@@ -86,12 +100,15 @@ const episodeOverview = {
   },
   watch: {
     channelFilter: function () {
+      this.resetEpisodes()
       this.fetchEpisodes()
     },
     updateChannelsCounter: function () {
+      this.resetChannels()
       this.fetchChannels()
     },
     updateEpisodesCounter: function () {
+      this.resetEpisodes()
       this.fetchEpisodes()
     },
   }
