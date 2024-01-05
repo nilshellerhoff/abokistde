@@ -13,5 +13,5 @@ export const getDjangoHost = () => {
   if (process.env.DEV) {
     return `${location.protocol}//${location.hostname}:8000`;
   }
-  return `${location.protocol}//${location.hostname}`;
+  return `${location.protocol}//${location.host}`;
 };

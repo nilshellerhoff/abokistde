@@ -75,7 +75,7 @@ ROOT_URLCONF = 'abokistde.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['frontend/dist/spa'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
