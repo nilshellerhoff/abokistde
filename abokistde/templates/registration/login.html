@@ -1,53 +1,61 @@
 {% extends "abokistde/login_template.html" %}
 
 {% block content %}
-  {% if form.errors %}
-    <p>Your username and password didn't match. Please try again.</p>
-  {% endif %}
-
-  {% if next %}
-    {% if user.is_authenticated %}
-      <p>Your account doesn't have access to this page. To proceed,
-        please login with an account that has access.</p>
-    {% else %}
-      <p>Please login to see this page.</p>
+  {% if user.is_authenticated %}
+    <p>Logged in as {{ user.get_username }}</p>
+    <v-btn
+            href="/accounts/logout">Logout
+    </v-btn>
+  {% else %}
+    {% if form.errors %}
+      <p>Your username and password didn't match. Please try again.</p>
     {% endif %}
+
+    {% if next %}
+      {% if user.is_authenticated %}
+        <p>Your account doesn't have access to this page. To proceed,
+          please login with an account that has access.</p>
+      {% else %}
+        <p>Please login to see this page.</p>
+      {% endif %}
+    {% endif %}
+
+    <form method="post"
+          action="{% url 'login' %}">
+      {% csrf_token %}
+
+      <v-text-field
+              name="username"
+              label="Username"
+              type="text"
+      ></v-text-field>
+      <v-text-field
+              name="password"
+              label="Password"
+              type="password"
+      >
+      </v-text-field>
+      <input type="hidden"
+             name="next"
+             value="{{ next }}">
+
+      <v-row class="px-4 py-2">
+        <v-btn
+                type="submit"
+                color="primary">Login
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+                href="{% url 'django_registration_register' %}">
+          Register
+        </v-btn>
+      </v-row>
+    </form>
+
+    <div class="pa-2">
+    </div>
   {% endif %}
 
-  <form method="post"
-        action="{% url 'login' %}">
-    {% csrf_token %}
-
-    <v-text-field
-            name="username"
-            label="Username"
-            type="text"
-    ></v-text-field>
-    <v-text-field
-            name="password"
-            label="Password"
-            type="password"
-    >
-    </v-text-field>
-    <input type="hidden"
-           name="next"
-           value="{{ next }}">
-
-    <v-row class="px-4 py-2">
-      <v-btn
-              type="submit"
-              color="primary">Login
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn
-              href="{% url 'django_registration_register' %}">
-        Register
-      </v-btn>
-    </v-row>
-  </form>
-
-  <div class="pa-2">
-  </div>
 
   {# Assumes you set up the password_reset view in your URLconf #}
   {#    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}

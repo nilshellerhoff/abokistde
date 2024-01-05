@@ -2,12 +2,14 @@ from rest_framework import viewsets, serializers
 from rest_framework.permissions import IsAuthenticated
 
 from abokistde.models import PublishingChannel
+from api.views.provider import ProviderSerializer
 
 
 class PublishingChannelSerializer(serializers.HyperlinkedModelSerializer):
+    provider = ProviderSerializer()
     class Meta:
         model = PublishingChannel
-        fields = ['id', 'name', 'url', 'description', 'thumbnail_url']
+        fields = ['id', 'name', 'url', 'description', 'thumbnail_url', 'provider']
 
 
 class PublishingChannelViewSet(viewsets.ReadOnlyModelViewSet):

@@ -11,33 +11,24 @@ from api.views.publishing_channel import PublishingChannelSerializer
 
 class EpisodeSerializer(serializers.ModelSerializer):
     publishing_channel = PublishingChannelSerializer(many=False)
-
-    class Meta:
-        model = Episode
-        fields = ['id', 'title', 'description', 'thumbnail_url', 'url', 'publishing_channel']
-
-
-class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Episode.objects.all()
-    serializer_class = EpisodeSerializer
-    filterset_fields = ['publishing_channel']
-
-
-class EpisodeUserSerializer(serializers.ModelSerializer):
-    publishing_channel = PublishingChannelSerializer(many=False)
     is_hidden = serializers.SerializerMethodField(read_only=True)
+    is_subscribed = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Episode
-        fields = ['id', 'title', 'description', 'thumbnail_url', 'url', 'is_hidden', 'publishing_channel']
+        fields = ['id', 'title', 'description', 'thumbnail_url', 'url', 'published',  'is_hidden', 'is_subscribed', 'publishing_channel']
 
     def get_is_hidden(self, obj):
         return self.context['request'].user.hiddenepisode_set.filter(episode=obj).exists()
 
+    def get_is_subscribed(self, obj):
+        return self.context['request'].user.usersubscription_set.filter(publishing_channel=obj.publishing_channel).exists()
+
 
 class EpisodeFilter(FilterSet):
     is_hidden = BooleanFilter(method='filter_is_hidden')
-    publishing_channel_id = filterset.NumberFilter(field_name='publishing_channel_id')
+    is_subscribed = BooleanFilter(method='filter_is_subscribed')
+    publishing_channel_id = filterset.NumberFilter(field_name='publishing_channel__id')
 
     def filter_is_hidden(self, queryset, name, value):
         if value is not None:
@@ -48,14 +39,23 @@ class EpisodeFilter(FilterSet):
 
         return queryset
 
+    def filter_is_subscribed(self, queryset, name, value):
+        if value is not None:
+            if value:
+                queryset = queryset.filter(publishing_channel__usersubscription__user=self.request.user)
+            else:
+                queryset = queryset.exclude(publishing_channel__usersubscription__user=self.request.user)
 
-class EpisodeUserViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = EpisodeUserSerializer
+        return queryset
+
+
+class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = EpisodeSerializer
     permission_classes = [IsAuthenticated]
     filterset_class = EpisodeFilter
 
     def get_queryset(self):
-        return Episode.objects.filter(publishing_channel__usersubscription__user=self.request.user).order_by(
+        return Episode.objects.order_by(
             "-published").distinct()
 
     @action(detail=True, methods=['post'])

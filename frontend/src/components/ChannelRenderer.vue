@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable @click="setChannelFilter(subscription.publishing_channel)">
+  <q-item clickable :to="`/channel/${channel.id}`">
     <q-item-section avatar>
       <q-avatar>
         <q-img :src="channel.thumbnail_url">
@@ -19,20 +19,20 @@
     </q-item-section>
     <q-item-section side>
       <q-btn
-        v-if="removeChannelButton"
+        v-if="showRemoveSubscription"
         flat
         round
         dense
         icon="delete"
-        @click.stop="removeSubscription(subscription)"
+        @click.prevent="$emit('unsubscribe', subscription)"
       />
       <q-btn
-        v-if="addChannelButton"
+        v-if="showAddSubscription"
         flat
         round
         dense
         icon="add"
-        @click.stop="addSubscription(channel)"
+        @click.prevent="$emit('subscribe', channel)"
       />
     </q-item-section>
   </q-item>
@@ -44,8 +44,8 @@ import { PublishingChannel, UserSubscription } from 'src/types/api';
 interface Props {
   subscription?: UserSubscription;
   channel?: PublishingChannel;
-  removeChannelButton?: boolean;
-  addChannelButton?: boolean;
+  showRemoveSubscription?: boolean;
+  showAddSubscription?: boolean;
 }
 
 const props = defineProps<Props>();

@@ -1,172 +1,257 @@
-<template id="templateChannelList">
-  <v-navigation-drawer
-      v-model="drawer"
-      :width="400"
-  >
-    <template #prepend>
-      <v-text-field
-          variant="outlined"
-          prepend-inner-icon="mdi-magnify"
-          v-model="searchValue"
-          @update:model-value="searchDebounced"
-          placeholder="Search channels"
-          class="px-2 pt-4"
-      ></v-text-field>
-    </template>
-    <div v-if="isLoading"
-         class="text-center">
-      <loading-indicator class="mx-auto" style="width: 40px"></loading-indicator>
+<template>
+  <q-item-label header>Subscriptions</q-item-label>
+  <q-item>
+    <q-input
+      outlined
+      v-model="searchValue"
+      @update:model-value="
+        isSearching = true;
+        searchDebounced();
+      "
+      @clear="searchValue = ''"
+      placeholder="Search channels"
+      clearable
+      style="width: 100%"
+    >
+      <template v-slot:prepend>
+        <q-icon name="search" />
+      </template>
+    </q-input>
+  </q-item>
+  <div style="height: calc(100% - 72px - 48px); overflow-y: scroll">
+    <div v-if="isLoading" class="mx-auto">
+      <loading-indicator style="width: 40px"></loading-indicator>
     </div>
-    <v-list>
-      <v-list-item
-          v-for="subscription in subscriptionsFiltered"
-          :key="subscription.id"
-          :value="subscription"
-          color="primary"
-          class="pa-2"
-          @click="setChannelFilter(subscription.publishing_channel)"
-      >
-        <template v-slot:prepend>
-          <v-avatar :image="subscription.publishing_channel.thumbnail_url"
-                    icon="mdi-account-outline"></v-avatar>
-        </template>
-        <v-list-item-title v-text="subscription.publishing_channel.name"></v-list-item-title>
-        <template v-slot:append>
-          <remove-channel-button
-              :subscription="subscription"
-          ></remove-channel-button>
-        </template>
+    <q-list>
+      <ChannelRenderer
+        v-for="subscription in subscriptionsFiltered"
+        :key="subscription.id"
+        :subscription="subscription"
+        show-remove-subscription
+        @unsubscribe="unsubscribe(subscription)"
+      />
 
-      </v-list-item>
-      <v-divider></v-divider>
-      <span v-if="searchValue">
-      <v-list-subheader>Search results</v-list-subheader>
-      <v-list-item v-if="isSearching"
-                   class="text-center">
-        <loading-indicator class="mx-auto" style="width: 40px"></loading-indicator>
-      </v-list-item>
-      <v-list-item
-          v-else
-          class="text-center">
-      <v-btn @click="searchOnline">
-        Search on Youtube
-      </v-btn>
-        </v-list-item>
-      <v-list-item
-          v-for="channel in searchResults"
-          :key="channel.id"
-          :value="channel"
-          color="primary"
-          class="pa-2"
-      >
-        <template v-slot:prepend>
-          <v-avatar :image="channel.thumbnail_url"
-                    icon="mdi-account-outline"></v-avatar>
-        </template>
-        <v-list-item-title v-text="channel.name"></v-list-item-title>
-        <template v-slot:append>
-          <add-channel-button
-              :channel="channel"
-              :disabled="subscriptions.find(s => s.publishing_channel.id === channel.id)"
-          ></add-channel-button>
-        </template>
-      </v-list-item>
-    </span>
-    </v-list>
-    <template v-slot:append>
-      <github-link></github-link>
-    </template>
-  </v-navigation-drawer>
+      <q-separator />
+
+      <span v-if="searchValue.trim() !== ''">
+        <q-item-label header>Search Results</q-item-label>
+        <span v-if="isSearching">
+          <q-item class="text-center">
+            <loading-indicator
+              class="mx-auto"
+              style="width: 40px"
+            ></loading-indicator>
+          </q-item>
+        </span>
+        <span v-else>
+          <q-item class="text-center">
+            <q-btn @click="searchOnline">Search on Youtube</q-btn>
+          </q-item>
+          <ChannelRenderer
+            v-for="channel in searchResults"
+            :key="channel.id"
+            :channel="channel"
+            :show-add-subscription="
+              !subscriptions.find((s) => s.publishing_channel.id === channel.id)
+            "
+            @subscribe="subscribe(channel)"
+        /></span>
+      </span>
+    </q-list>
+  </div>
+  <q-separator />
 </template>
 
-<script>
-const channelList = {
-  template: "#templateChannelList",
-  delimiters: ['[[', ']]'],
-  inject: ["channelFilter", "drawer", "updateChannelsCounter"],
-  data() {
-    return {
-      channels: [],
-      subscriptions: [],
-      isLoading: 0,
-      searchResults: [],
-      searchValue: "",
-      isSearching: false,
-    }
-  },
-  computed: {
-    subscriptionsFiltered() {
-      return this.subscriptions.filter(s => s.publishing_channel.name.toLowerCase().includes(this.searchValue.toLowerCase()))
-    }
-  },
-  methods: {
-    fetchSubscriptions() {
-      this.isLoading++;
-      axios({
-        method: 'get',
-        url: "/api/user_subscription/",
-      }).then((response) => {
-        this.subscriptions = response.data.results
-        this.channels = response.data.results.map(s => s.publishing_channel)
-      }).finally(() => {
-        this.isLoading--;
-      })
-    },
-    search() {
-      this.searchResults = []
-      if (this.searchValue.trim() !== '') {
-        this.isSearching = true;
-        axios({
-          method: 'get',
-          url: "/api/publishing_channel",
-          params: {
-            'search': this.searchValue.trim()
-          }
-        }).then((response) => {
-          this.searchResults = response.data.results
-        }).finally(() => {
-          this.isSearching = false
-        })
-      }
-    },
-    searchDebounced: _.debounce(function () {
-      this.search()
-    }, 500),
-    searchOnline: function () {
-      this.searchResults = []
-      if (this.searchValue.trim() !== '') {
-        this.isSearching = true;
-        axios({
-          method: 'get',
-          url: "/search_online",
-          params: {
-            'query': this.searchValue.trim()
-          }
-        }).then((response) => {
-          this.searchResults = response.data.data
-          this.isSearching = false
-        }).catch(() => {
-          this.isSearching = false
-        })
-      }
-    },
-    setChannelFilter(channel) {
-      this.channelFilter = channel;
-    }
-  },
-  mounted() {
-    this.fetchSubscriptions()
-  },
-  watch: {
-    updateChannelsCounter: function () {
-      this.fetchSubscriptions()
-    }
-  }
-}
+<script setup lang="ts">
+import { computed, ref } from 'vue';
+import LoadingIndicator from 'components/LoadingIndicator.vue';
+import { apiClient } from 'src/util/api';
+import ChannelRenderer from 'components/ChannelRenderer.vue';
+import _ from 'lodash';
+import { PublishingChannel, UserSubscription } from 'src/types/api';
 
-app.component("channelList", channelList)
-app.provide("channelFilter", Vue.ref(null))
-app.provide("drawer", Vue.ref(null))
-app.provide("updateEpisodesCounter", Vue.ref(0))
-app.provide("updateChannelsCounter", Vue.ref(0))
+const searchValue = ref('');
+
+const isLoading = ref(0);
+
+const channels = ref([]);
+const subscriptions = ref([]);
+const subscriptionsFiltered = computed(() => {
+  return subscriptions.value.filter((s) =>
+    s.publishing_channel.name
+      .toLowerCase()
+      .includes(searchValue.value.toLowerCase())
+  );
+});
+
+const searchResults = ref([]);
+const isSearching = ref(false);
+
+const fetchSubscriptions = () => {
+  isLoading.value++;
+  apiClient
+    .get('/user_subscription/')
+    .then((response) => {
+      subscriptions.value = response.data.results;
+      channels.value = response.data.results.map((s) => s.publishing_channel);
+    })
+    .finally(() => {
+      isLoading.value--;
+    });
+};
+
+const search = () => {
+  searchResults.value = [];
+  if (searchValue.value.trim() !== '') {
+    isSearching.value = true;
+    apiClient
+      .get('/publishing_channel/', {
+        params: {
+          search: searchValue.value.trim(),
+        },
+      })
+      .then((response) => {
+        searchResults.value = response.data.results;
+      })
+      .finally(() => {
+        isSearching.value = false;
+      });
+  }
+};
+
+const searchDebounced = _.debounce(function () {
+  console.log('search debounced');
+  search();
+}, 500);
+
+const searchOnline = () => {
+  searchResults.value = [];
+  if (searchValue.value.trim() !== '') {
+    isSearching.value = true;
+    apiClient
+      .get('/search_online/', {
+        params: {
+          query: searchValue.value.trim(),
+        },
+      })
+      .then((response) => {
+        searchResults.value = response.data.data;
+        isSearching.value = false;
+      })
+      .catch(() => {
+        isSearching.value = false;
+      });
+  }
+};
+
+const subscribe = (channel: PublishingChannel) => {
+  apiClient
+    .post('user_subscription/', {
+      publishing_channel_id: channel.id,
+    })
+    .then(() => {
+      fetchSubscriptions();
+    });
+};
+
+const unsubscribe = (subscription: UserSubscription) => {
+  if (
+    confirm(
+      `Remove ${subscription.publishing_channel.name} from subscriptions?`
+    )
+  ) {
+    apiClient.delete(`user_subscription/${subscription.id}/`).then(() => {
+      fetchSubscriptions();
+    });
+  }
+};
+
+fetchSubscriptions();
+
+//   inject: ["channelFilter", "drawer", "updateChannelsCounter"],
+//   data() {
+//     return {
+//       channels: [],
+//       subscriptions: [],
+//       isLoading: 0,
+//       searchResults: [],
+//       searchValue: "",
+//       isSearching: false,
+//     }
+//   },
+//   computed: {
+//     subscriptionsFiltered() {
+//       return this.subscriptions.filter(s => s.publishing_channel.name.toLowerCase().includes(this.searchValue.toLowerCase()))
+//     }
+//   },
+//   methods: {
+//     fetchSubscriptions() {
+//       this.isLoading++;
+//       axios({
+//         method: 'get',
+//         url: "/api/user_subscription/",
+//       }).then((response) => {
+//         this.subscriptions = response.data.results
+//         this.channels = response.data.results.map(s => s.publishing_channel)
+//       }).finally(() => {
+//         this.isLoading--;
+//       })
+//     },
+//     search() {
+//       this.searchResults = []
+//       if (this.searchValue.trim() !== '') {
+//         this.isSearching = true;
+//         axios({
+//           method: 'get',
+//           url: "/api/publishing_channel",
+//           params: {
+//             'search': this.searchValue.trim()
+//           }
+//         }).then((response) => {
+//           this.searchResults = response.data.results
+//         }).finally(() => {
+//           this.isSearching = false
+//         })
+//       }
+//     },
+//     searchDebounced: _.debounce(function () {
+//       this.search()
+//     }, 500),
+//     searchOnline: function () {
+//       this.searchResults = []
+//       if (this.searchValue.trim() !== '') {
+//         this.isSearching = true;
+//         axios({
+//           method: 'get',
+//           url: "/search_online",
+//           params: {
+//             'query': this.searchValue.trim()
+//           }
+//         }).then((response) => {
+//           this.searchResults = response.data.data
+//           this.isSearching = false
+//         }).catch(() => {
+//           this.isSearching = false
+//         })
+//       }
+//     },
+//     setChannelFilter(channel) {
+//       this.channelFilter = channel;
+//     }
+//   },
+//   mounted() {
+//     this.fetchSubscriptions()
+//   },
+//   watch: {
+//     updateChannelsCounter: function () {
+//       this.fetchSubscriptions()
+//     }
+//   }
+// }
+
+// app.component("channelList", channelList)
+// app.provide("channelFilter", Vue.ref(null))
+// app.provide("drawer", Vue.ref(null))
+// app.provide("updateEpisodesCounter", Vue.ref(0))
+// app.provide("updateChannelsCounter", Vue.ref(0))
 </script>

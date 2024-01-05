@@ -1,3 +1,4 @@
+from django.db.models import Max
 from rest_framework import viewsets, serializers
 from rest_framework.permissions import IsAuthenticated
 
@@ -24,7 +25,7 @@ class UserSubscriptionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return UserSubscription.objects.filter(
             user=self.request.user
-        ).order_by("publishing_channel__name")
+        ).annotate(last_publish=Max("publishing_channel__episode__published")).order_by("-last_publish")
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

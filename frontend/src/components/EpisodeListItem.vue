@@ -1,0 +1,69 @@
+<template>
+  <q-card :style="{ width: `${props.width}px` }" flat>
+    <ChannelRenderer
+      v-if="props.showChannelHeader"
+      :channel="props.episode?.publishing_channel"
+    />
+    <a :href="episode?.url" target="_blank" class="nolink cursor-pointer">
+      <q-img
+        ratio="1.778"
+        :src="props.episode?.thumbnail_url"
+        class="relative-position"
+      >
+        <div
+          style="
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background-color: #ffffff88;
+            border-radius: 50%;
+            padding: 8px;
+          "
+        >
+          <q-btn
+            size="12px"
+            color="black"
+            flat
+            round
+            dense
+            :icon="episode?.is_hidden ? 'visibility' : 'visibility_off'"
+            @click.prevent="$emit('hideUnhide')"
+          />
+        </div>
+      </q-img>
+
+      <q-item-section>
+        <q-item-label
+          lines="2"
+          style="font-weight: bold; font-size: 14px; padding: 4px"
+          >{{ props.episode.title }}</q-item-label
+        >
+        <q-item-label lines="1" style="font-size: 12px; padding: 4px">
+          <timeago :datetime="date"
+        /></q-item-label>
+      </q-item-section>
+    </a>
+  </q-card>
+</template>
+
+<script setup lang="ts">
+import { Episode } from 'src/types/api';
+import ChannelRenderer from 'components/ChannelRenderer.vue';
+
+interface Props {
+  episode?: Episode;
+  showChannelHeader?: boolean;
+  width?: number;
+}
+
+const props = defineProps<Props>();
+
+const date = new Date(props.episode?.published ?? '');
+</script>
+
+<style>
+.nolink {
+  text-decoration: inherit;
+  color: inherit;
+}
+</style>

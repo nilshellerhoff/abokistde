@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="HHH Lpr lFf">
+  <q-layout view="hHh LpR lFf">
     <q-ajax-bar size="4px" />
     <q-header elevated>
       <q-toolbar>
@@ -11,19 +11,15 @@
           aria-label="Menu"
           @click="toggleLeftDrawer"
         />
+        <div style="height: 50px" class="q-ma-sm" />
 
-        <q-toolbar-title>
-          <div class="q-pa-sm">
-            <AbokistdeLogo :height="50" />
-          </div>
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <header-search />
+        <header-menu />
       </q-toolbar>
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <ChannelList />
+      <DrawerContent />
     </q-drawer>
 
     <q-page-container>
@@ -34,11 +30,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import EssentialLink, {
-  EssentialLinkProps,
-} from 'components/EssentialLink.vue';
-import AbokistdeLogo from 'components/AbokistdeLogo.vue';
-import ChannelList from 'components/ChannelList.vue';
+import DrawerContent from 'components/DrawerContent.vue';
+import HeaderMenu from 'components/HeaderBar/HeaderMenu.vue';
+import HeaderSearch from 'components/HeaderBar/HeaderSearch.vue';
 
 const leftDrawerOpen = ref(false);
 

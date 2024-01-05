@@ -11,6 +11,11 @@ const routes: RouteRecordRaw[] = [
         name: 'channel',
         component: () => import('pages/ChannelPage.vue'),
       },
+      {
+        path: 'search/:query',
+        name: 'search',
+        component: () => import('pages/SearchPage.vue'),
+      },
     ],
   },
 

@@ -163,6 +163,15 @@ def search_online(request):
     ids_online = sites_wrapper.search(searchterm)
     ids_local = [c.id for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
     results = list(PublishingChannel.objects.filter(id__in=ids_online).values())
+
+    for r in results:
+        r['provider'] = {
+            "id": 82,
+            "name": "Youtube",
+            "url": "https://www.youtube.com/",
+            "icon_url": "https://www.youtube.com/s/desktop/5191a190/img/favicon_144x144.png"
+        }
+
     return JsonResponse({
         "status": "success",
         "data": results

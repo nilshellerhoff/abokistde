@@ -1,5 +1,5 @@
 <template>
-  <q-btn color="primary" icon="more_vert">
+  <q-btn flat icon="more_vert">
     <q-menu>
       <q-list style="min-width: 100px" class="q-px-md">
         <q-item clickable v-close-popup @click="isLoginDialogShown += 1">
