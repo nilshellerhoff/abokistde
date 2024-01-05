@@ -27,3 +27,10 @@ jobs:
         cd frontend
         npm ci
         npm run build
+
+    # 👇 Store the dist folder
+    - uses: actions/upload-artifact@v4
+      with:
+        name: app-build
+        path: dist
+
