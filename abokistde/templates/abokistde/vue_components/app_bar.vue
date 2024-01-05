@@ -10,7 +10,7 @@
     <v-spacer></v-spacer>
 <!--    <dark-theme-toggle></dark-theme-toggle>-->
 
-    <v-btn href="/accounts/logout" icon="mdi-logout"></v-btn>
+    <v-btn href="/accounts/logout/" icon="mdi-logout"></v-btn>
 
   </v-app-bar>
   <channel-list></channel-list>

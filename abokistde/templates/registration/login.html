@@ -4,7 +4,7 @@
   {% if user.is_authenticated %}
     <p>Logged in as {{ user.get_username }}</p>
     <v-btn
-            href="/accounts/logout">Logout
+            href="/accounts/logout/">Logout
     </v-btn>
   {% else %}
     {% if form.errors %}
