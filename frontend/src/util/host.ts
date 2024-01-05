@@ -5,7 +5,7 @@ export const getBaseApiUrl = () => {
 
 export const getLoginUrl = () => {
   const djangoHost = getDjangoHost();
-  return `${djangoHost}/accounts/login`;
+  return `${djangoHost}/accounts/login/`;
 };
 
 export const getDjangoHost = () => {

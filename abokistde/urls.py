@@ -40,6 +40,6 @@ urlpatterns += legacy_urls.urlpatterns
 urlpatterns += static('/assets', document_root='frontend/dist/spa/assets')
 urlpatterns += static('/favicon.ico', document_root='frontend/dist/spa/favicon.ico')
 urlpatterns += [
-  re_path('', TemplateView.as_view(template_name="index.html")),
+    re_path('', TemplateView.as_view(template_name="index.html")),
 ]
 
