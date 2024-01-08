@@ -28,9 +28,18 @@ jobs:
         npm ci
         npm run build
 
-    # 👇 Store the dist folder
+    # Store the dist folder
     - uses: actions/upload-artifact@v4
       with:
         name: app-build
         path: frontend/dist
 
+    # deploy to abokist.de server
+    - name: deploy
+      uses: srueda99/scp-action@v12
+      with:
+          port: 22
+          host: ${{ secrets.SERVER_ADDRESS }}
+          destination: ${{ secrets.SERVER_PATH }}/
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_KEY }}
