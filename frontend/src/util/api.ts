@@ -6,11 +6,8 @@ const getAuthorizationHeaders = () => {
   const headers: Record<string, string> = {};
   cookies.forEach((cookie) => {
     const [key, value] = cookie.split('=');
-    if (key == 'csrftoken') {
-      headers['X-CSRFToken'] = value;
-    }
-    if (key == 'sessionid') {
-      headers['Cookie'] = `sessionid=${value}`;
+    if (key.trim() == 'csrftoken') {
+      headers['X-CSRFToken'] = value.trim();
     }
   });
   return headers;
