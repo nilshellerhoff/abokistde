@@ -14,8 +14,6 @@ const getAuthorizationHeaders = () => {
 };
 
 export const apiClient = axios.create({
-  // baseURL: process.env.API_BASE_URL,
-  // baseURL: 'http://localhost:8000/api', // TODO
   baseURL: getBaseApiUrl(),
   headers: getAuthorizationHeaders(),
   withCredentials: true,
