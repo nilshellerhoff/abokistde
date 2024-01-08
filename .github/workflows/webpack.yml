@@ -40,6 +40,18 @@ jobs:
       with:
           port: 22
           host: ${{ secrets.SERVER_ADDRESS }}
-          destination: ${{ secrets.SERVER_PATH }}/
+          destination: ${{ secrets.SERVER_PATH }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_KEY }}
+
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_ADDRESS }}
+        username: ${{ secrets.SERVER_USERNAME }}
+        key: ${{ secrets.SERVER_KEY }}
+        port: 22
+        source: "*"
+        target: ${{ server.SERVER_PATH }}
+        overwrite: 1
+
