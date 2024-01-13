@@ -45,4 +45,13 @@ jobs:
         source: "*"
         target: ${{ secrets.SERVER_PATH }}
         overwrite: 1
+        
+    - name: Migrate
+      run: |
+        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://abokist.de/management/migrate
+        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://abokist.de/management/collectstatic
+        curl -u ${{ secrets.DJANGO_ADMIN_USER }}:${{ secrets.DJANGO_ADMIN_PASSWORD }} https://abokist.de/management/createsuperuser
+        
+    
+    
 
