@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import TemplateView
 
-from . import views
+from . import views, management_urls
 from . import legacy_urls
 from api.urls import urlpatterns as api_urlpatterns
 
@@ -33,6 +33,8 @@ urlpatterns = [
 ]
 
 urlpatterns += api_urlpatterns
+
+urlpatterns += management_urls.urlpatterns
 
 urlpatterns += legacy_urls.urlpatterns
 
