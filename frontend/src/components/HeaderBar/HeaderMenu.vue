@@ -8,7 +8,7 @@
           ></q-item-section>
           <q-item-section side>
             <q-toggle
-              v-model="darkToggleValue"
+              v-model="localSettingsStore.darkMode"
               @click="localSettingsStore.toggleDarkMode"
               label="Dark mode"
               left-label
@@ -30,23 +30,10 @@
 
 <script setup lang="ts">
 import LoginView from 'components/LoginView.vue';
-import { ref, watch } from 'vue';
-import { useQuasar } from 'quasar';
+import { ref } from 'vue';
 import { useLocalSettingsStore } from 'stores/local-settings-store';
 
 const isLoginDialogShown = ref(0);
 
-const $q = useQuasar();
-
-const darkToggleValue = ref($q.dark.isActive);
-
 const localSettingsStore = useLocalSettingsStore();
-
-watch(
-  () => $q.dark.isActive,
-  () => {
-    darkToggleValue.value = $q.dark.isActive;
-    localSettingsStore.darkMode = $q.dark.isActive;
-  }
-);
 </script>
