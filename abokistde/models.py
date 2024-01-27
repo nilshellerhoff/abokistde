@@ -104,3 +104,12 @@ class HiddenEpisode(models.Model):
 
     def __str__(self):
         return self.user.username + ' - ' + self.episode.title
+
+
+class FavoriteEpisode(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    episode = models.ForeignKey(Episode, on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.user.username + ' - ' + self.episode.title

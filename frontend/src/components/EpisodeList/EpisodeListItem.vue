@@ -16,8 +16,8 @@
             top: 4px;
             right: 4px;
             background-color: #ffffff88;
-            border-radius: 50%;
-            padding: 8px;
+            border-radius: 10px;
+            padding: 0;
           "
         >
           <q-btn
@@ -26,8 +26,19 @@
             flat
             round
             dense
+            :icon="episode?.is_favorited ? 'favorite' : 'favorite_border'"
+            @click.prevent="$emit('favorite')"
+            style="margin: 8px"
+          /><br />
+          <q-btn
+            size="12px"
+            color="black"
+            flat
+            round
+            dense
             :icon="episode?.is_hidden ? 'visibility' : 'visibility_off'"
             @click.prevent="$emit('hideUnhide')"
+            style="margin: 8px"
           />
         </div>
       </q-img>
@@ -36,11 +47,11 @@
         <q-item-label
           lines="2"
           style="font-weight: bold; font-size: 14px; padding: 4px"
-          >{{ props.episode.title }}</q-item-label
-        >
+          >{{ props.episode.title }}
+        </q-item-label>
         <q-item-label lines="1" style="font-size: 12px; padding: 4px">
-          <timeago :datetime="date"
-        /></q-item-label>
+          <timeago :datetime="date" />
+        </q-item-label>
       </q-item-section>
     </a>
   </q-card>

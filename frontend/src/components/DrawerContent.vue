@@ -11,6 +11,19 @@
     </q-item-section>
     <q-item-section>Feed</q-item-section>
   </q-item>
+  <q-item
+    clickable
+    v-ripple
+    :active="$route.name === 'favorites'"
+    active-class="active"
+    to="/favorites"
+  >
+    <q-item-section avatar>
+      <q-icon name="favorite" />
+    </q-item-section>
+    <q-item-section>Favorites</q-item-section>
+  </q-item>
+
   <q-separator />
   <div style="height: calc(100% - 104px)">
     <ChannelList />

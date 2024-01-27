@@ -7,6 +7,11 @@ const routes: RouteRecordRaw[] = [
     children: [
       { path: '', name: 'feed', component: () => import('pages/FeedPage.vue') },
       {
+        path: 'favorites',
+        name: 'favorites',
+        component: () => import('pages/FavoritesPage.vue'),
+      },
+      {
         path: 'channel/:id',
         name: 'channel',
         component: () => import('pages/ChannelPage.vue'),

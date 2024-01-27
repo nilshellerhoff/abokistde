@@ -39,6 +39,7 @@ export type Episode = {
   url: string;
   published: string;
   is_hidden: boolean;
+  is_favorited: boolean;
   publishing_channel: PublishingChannel;
 };
 

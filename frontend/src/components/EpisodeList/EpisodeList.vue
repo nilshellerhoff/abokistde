@@ -14,6 +14,7 @@
       :episode="episode"
       :width="episodeCardWidth"
       @hideUnhide="hideUnhideEpisode(episode)"
+      @favorite="favoriteEpisode(episode)"
     />
   </div>
   <div v-if="!isLoading && (!episodes || !episodes.length)">
@@ -46,7 +47,7 @@
 <script setup lang="ts">
 // inject: ["channelFilter", "updateEpisodesCounter", "updateChannelsCounter"],
 import { Ref, ref, watch } from 'vue';
-import EpisodeListItem from 'components/EpisodeListItem.vue';
+import EpisodeListItem from 'components/EpisodeList/EpisodeListItem.vue';
 import { apiClient } from 'src/util/api';
 import { Episode, EpisodeResponse } from 'src/types/api';
 import LoadingIndicator from 'components/LoadingIndicator.vue';
@@ -113,6 +114,13 @@ const hideUnhideEpisode = (episode: Episode) => {
   });
 };
 
+const favoriteEpisode = (episode: Episode) => {
+  const action = episode.is_favorited ? 'unfavorite' : 'favorite';
+  apiClient.post(`/episode_user/${episode.id}/${action}/`).then(() => {
+    episode.is_favorited = !episode.is_favorited;
+  });
+};
+
 const onMounted = () => {
   resetEpisodes();
   fetchEpisodes();
@@ -131,23 +139,6 @@ watch(
   },
   { deep: true }
 );
-
-//
-//   watch: {
-//     channelFilter: function () {
-//       this.resetEpisodes()
-//       this.fetchEpisodes()
-//     },
-//     updateChannelsCounter: function () {
-//       this.resetChannels()
-//       this.fetchChannels()
-//     },
-//     updateEpisodesCounter: function () {
-//       this.resetEpisodes()
-//       this.fetchEpisodes()
-//     },
-//   }
-// }
 </script>
 
 <style>

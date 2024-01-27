@@ -14,7 +14,7 @@ import { Ref, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { PublishingChannel } from 'src/types/api';
 import ChannelPageHeader from 'components/ChannelPageHeader.vue';
-import EpisodeList from 'components/EpisodeList.vue';
+import EpisodeList from 'components/EpisodeList/EpisodeList.vue';
 
 const route = useRoute();
 

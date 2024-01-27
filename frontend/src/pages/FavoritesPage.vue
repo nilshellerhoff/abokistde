@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <episode-list :episode-api-params="{ is_subscribed: true }" />
+    <episode-list :episode-api-params="{ is_favorited: true }" />
   </q-page>
 </template>
 
