@@ -14,9 +14,10 @@ class UserSubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserSubscription
-        fields = ['id', 'publishing_channel', 'publishing_channel_id', 'category']
+        fields = ['id', 'publishing_channel', 'publishing_channel_id', 'category', 'category_id']
         extra_kwargs = {
-            'publishing_channel_id': {'source': 'publishing_channel', 'write_only': True},
+            'publishing_channel_id': {'source': 'publishing_channel'},
+            'category_id': {'source': 'category'}
         }
 
 

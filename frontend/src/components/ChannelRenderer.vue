@@ -18,7 +18,14 @@
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <q-btn flat round dense icon="settings" @click.prevent="alert" />
+      <q-btn
+        v-if="showSubscriptionSettings"
+        flat
+        round
+        dense
+        icon="settings"
+        @click.prevent="alert"
+      />
       <!--      <q-btn-->
       <!--        v-if="showRemoveSubscription"-->
       <!--        flat-->
@@ -27,14 +34,14 @@
       <!--        icon="delete"-->
       <!--        @click.prevent="$emit('unsubscribe', subscription)"-->
       <!--      />-->
-      <!--      <q-btn-->
-      <!--        v-if="showAddSubscription"-->
-      <!--        flat-->
-      <!--        round-->
-      <!--        dense-->
-      <!--        icon="add"-->
-      <!--        @click.prevent="$emit('subscribe', channel)"-->
-      <!--      />-->
+      <q-btn
+        v-if="showAddSubscription"
+        flat
+        round
+        dense
+        icon="add"
+        @click.prevent="$emit('subscribe', channel)"
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -47,7 +54,7 @@ import SubscriptionSettingsModal from 'components/Modals/SubscriptionSettingsMod
 interface Props {
   subscription?: UserSubscription;
   channel?: PublishingChannel;
-  showRemoveSubscription?: boolean;
+  showSubscriptionSettings?: boolean;
   showAddSubscription?: boolean;
 }
 

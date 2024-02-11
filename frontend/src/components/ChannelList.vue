@@ -27,7 +27,7 @@
         v-for="subscription in subscriptionsFiltered"
         :key="subscription.id"
         :subscription="subscription"
-        show-remove-subscription
+        show-subscription-settings
         @unsubscribe="unsubscribe(subscription)"
       />
 

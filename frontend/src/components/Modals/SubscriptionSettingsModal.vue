@@ -13,10 +13,12 @@
             <td>
               <q-select
                 name="Category"
-                v-model="subscriptionCategoryId"
+                v-model="subscription.category_id"
                 :options="contentStore.subscriptionCategories"
                 option-label="name"
                 option-value="id"
+                emit-value
+                map-options
                 clearable
                 placeholder="No category"
               />
@@ -30,6 +32,7 @@
 
       <!-- buttons example -->
       <q-card-actions align="right">
+        <q-btn color="negative" label="Remove" @click="onRemoveClick" />
         <q-btn color="primary" label="Save" @click="onSaveClick" />
         <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
       </q-card-actions>
@@ -50,6 +53,10 @@ interface Props {
 
 const props = defineProps<Props>();
 
+const $q = useQuasar();
+
+const contentStore = useContentStore();
+
 defineEmits([
   // REQUIRED; need to specify some events that your
   // component will emit through useDialogPluginComponent()
@@ -67,6 +74,11 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 
 // this is part of our example (so not required)
 const onSaveClick = () => {
+  console.log('saving');
+  contentStore.updateSubscription(subscription.id, {
+    publishing_channel_id: subscription.publishing_channel_id,
+    category_id: subscription.category_id,
+  });
   // on OK, it is REQUIRED to
   // call onDialogOK (with optional payload)
   onDialogOK();
@@ -74,7 +86,10 @@ const onSaveClick = () => {
   // ...and it will also hide the dialog automatically
 };
 
-const $q = useQuasar();
+const onRemoveClick = () => {
+  contentStore.removeSubscription(subscription.id);
+  onDialogOK();
+};
 
 const onAddCategoryClick = () => {
   $q.dialog({
@@ -82,10 +97,9 @@ const onAddCategoryClick = () => {
   });
 };
 
-const contentStore = useContentStore();
 const subscription = contentStore.getSubscriptionById(
   props.subscriptionId
 ) as UserSubscription;
 
-const subscriptionCategoryId = ref(subscription.category?.id);
+const subscriptionCategoryId = ref(subscription.category);
 </script>

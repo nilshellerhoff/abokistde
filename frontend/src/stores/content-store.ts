@@ -4,6 +4,7 @@ import {
   SubscriptionCategory,
   SubscriptionCategoryResponse,
   UserSubscription,
+  UserSubscriptionUpdate,
 } from 'src/types/api';
 import { apiClient } from 'src/util/api';
 
@@ -30,6 +31,18 @@ export const useContentStore = defineStore('content', {
     addSubscriptionCategory(category: Partial<SubscriptionCategory>) {
       apiClient.post('/subscription_category/', category).then(() => {
         this.loadCategories();
+      });
+    },
+    // updaters
+    updateSubscription(id: number, subscription: UserSubscriptionUpdate) {
+      apiClient.put(`/user_subscription/${id}/`, subscription).then(() => {
+        this.loadSubscriptions();
+      });
+    },
+    // removers
+    removeSubscription(id: number) {
+      apiClient.delete(`/user_subscription/${id}/`).then(() => {
+        this.loadSubscriptions();
       });
     },
     // loaders
