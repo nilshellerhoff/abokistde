@@ -23,13 +23,29 @@
       <loading-indicator style="width: 40px"></loading-indicator>
     </div>
     <q-list>
-      <ChannelRenderer
-        v-for="subscription in subscriptionsFiltered"
-        :key="subscription.id"
-        :subscription="subscription"
-        show-subscription-settings
-        @unsubscribe="unsubscribe(subscription)"
+      <ChannelListCategory
+        v-for="category in subscriptionCategories"
+        :key="category?.id ?? null"
+        :name="category?.name ?? 'Uncategorized'"
+        :subscriptions="
+          subscriptionsFiltered.filter(
+            (s) => s.category_id === (category?.id ?? null)
+          )
+        "
       />
+      <!--        <q-item>-->
+      <!--          <q-item-label>{{ category?.name ?? 'Uncategorized' }}</q-item-label>-->
+      <!--        </q-item>-->
+
+      <!--        <ChannelRenderer-->
+      <!--          v-for="subscription in subscriptionsFiltered.filter(-->
+      <!--            (s) => s.category_id === (category?.id ?? null)-->
+      <!--          )"-->
+      <!--          :key="subscription.id"-->
+      <!--          :subscription="subscription"-->
+      <!--          show-subscription-settings-->
+      <!--          @unsubscribe="unsubscribe(subscription)"-->
+      <!--        />-->
 
       <q-separator />
 
@@ -69,6 +85,8 @@ import { apiClient } from 'src/util/api';
 import ChannelRenderer from 'components/ChannelRenderer.vue';
 import _ from 'lodash';
 import { PublishingChannel, UserSubscription } from 'src/types/api';
+import { uniqOn } from 'src/util/array';
+import ChannelListCategory from 'components/ChannelListCategory.vue';
 
 const searchValue = ref('');
 
@@ -83,6 +101,17 @@ const subscriptionsFiltered = computed(() => {
       .includes(searchValue.value.toLowerCase())
   );
 });
+
+const subscriptionCategories = computed(() =>
+  uniqOn(
+    subscriptions.value.map((s) => s.category),
+    'id'
+  ).sort((a, b) => (a?.name ?? 'zzz' < b?.name ?? 'zzz' ? -1 : 1))
+);
+// const subscriptionsPerCategory = computed(() => {
+//   const subscriptions = {};
+//   subscriptionCategories.forEach();
+// });
 
 const searchResults = ref([]);
 const isSearching = ref(false);
