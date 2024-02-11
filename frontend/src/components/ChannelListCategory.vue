@@ -1,5 +1,5 @@
 <template>
-  <q-item>
+  <q-item clickable @click="toggleExpansion">
     <q-item-section>
       <q-item-label>{{ name }}</q-item-label>
     </q-item-section>
@@ -9,7 +9,6 @@
         round
         dense
         :icon="isExpanded ? 'expand_less' : 'expand_more'"
-        @click="toggleExpansion"
       />
     </q-item-section>
   </q-item>
