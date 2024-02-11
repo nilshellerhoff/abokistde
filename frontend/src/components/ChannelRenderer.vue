@@ -19,12 +19,12 @@
     </q-item-section>
     <q-item-section side>
       <q-btn
-        v-if="showRemoveSubscription"
+        v-if="showSubscriptionSettings"
         flat
         round
         dense
-        icon="delete"
-        @click.prevent="$emit('unsubscribe', subscription)"
+        icon="settings"
+        @click.prevent="alert"
       />
       <q-btn
         v-if="showAddSubscription"
@@ -40,15 +40,28 @@
 
 <script setup lang="ts">
 import { PublishingChannel, UserSubscription } from 'src/types/api';
+import { useQuasar } from 'quasar';
+import SubscriptionSettingsModal from 'components/Modals/SubscriptionSettingsModal.vue';
 
 interface Props {
   subscription?: UserSubscription;
   channel?: PublishingChannel;
-  showRemoveSubscription?: boolean;
+  showSubscriptionSettings?: boolean;
   showAddSubscription?: boolean;
 }
 
 const props = defineProps<Props>();
+
+const $q = useQuasar();
+
+const alert = () => {
+  $q.dialog({
+    component: SubscriptionSettingsModal,
+    componentProps: {
+      subscriptionId: props.subscription?.id,
+    },
+  });
+};
 
 const channel = props.channel ?? props.subscription?.publishing_channel;
 </script>

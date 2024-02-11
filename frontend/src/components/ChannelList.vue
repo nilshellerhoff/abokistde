@@ -23,14 +23,16 @@
       <loading-indicator style="width: 40px"></loading-indicator>
     </div>
     <q-list>
-      <ChannelRenderer
-        v-for="subscription in subscriptionsFiltered"
-        :key="subscription.id"
-        :subscription="subscription"
-        show-remove-subscription
-        @unsubscribe="unsubscribe(subscription)"
+      <ChannelListCategory
+        v-for="category in subscriptionCategories"
+        :key="category?.id ?? null"
+        :name="category?.name ?? 'Uncategorized'"
+        :subscriptions="
+          subscriptionsFiltered.filter(
+            (s) => s.category_id === (category?.id ?? null)
+          )
+        "
       />
-
       <q-separator />
 
       <span v-if="searchValue.trim() !== ''">
@@ -69,6 +71,8 @@ import { apiClient } from 'src/util/api';
 import ChannelRenderer from 'components/ChannelRenderer.vue';
 import _ from 'lodash';
 import { PublishingChannel, UserSubscription } from 'src/types/api';
+import { uniqOn } from 'src/util/array';
+import ChannelListCategory from 'components/ChannelListCategory.vue';
 
 const searchValue = ref('');
 
@@ -83,6 +87,13 @@ const subscriptionsFiltered = computed(() => {
       .includes(searchValue.value.toLowerCase())
   );
 });
+
+const subscriptionCategories = computed(() =>
+  uniqOn(
+    subscriptions.value.map((s) => s.category),
+    'id'
+  ).sort((a, b) => (a?.name ?? 'zzz' < b?.name ?? 'zzz' ? -1 : 1))
+);
 
 const searchResults = ref([]);
 const isSearching = ref(false);
@@ -152,18 +163,6 @@ const subscribe = (channel: PublishingChannel) => {
     .then(() => {
       fetchSubscriptions();
     });
-};
-
-const unsubscribe = (subscription: UserSubscription) => {
-  if (
-    confirm(
-      `Remove ${subscription.publishing_channel.name} from subscriptions?`
-    )
-  ) {
-    apiClient.delete(`user_subscription/${subscription.id}/`).then(() => {
-      fetchSubscriptions();
-    });
-  }
 };
 
 fetchSubscriptions();
