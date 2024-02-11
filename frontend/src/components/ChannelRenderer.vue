@@ -42,6 +42,7 @@
 <script setup lang="ts">
 import { PublishingChannel, UserSubscription } from 'src/types/api';
 import { useQuasar } from 'quasar';
+import SubscriptionSettingsModal from 'components/Modals/SubscriptionSettingsModal.vue';
 
 interface Props {
   subscription?: UserSubscription;
@@ -56,8 +57,10 @@ const $q = useQuasar();
 
 const alert = () => {
   $q.dialog({
-    title: 'Alert',
-    message: 'Some message',
+    component: SubscriptionSettingsModal,
+    componentProps: {
+      subscriptionId: props.subscription?.id,
+    },
   })
     .onOk(() => {
       // console.log('OK')

@@ -29,6 +29,7 @@ export type PublishingChannelResponse =
 export type UserSubscription = {
   id: number;
   publishing_channel: PublishingChannel;
+  category: SubscriptionCategory | null;
 };
 
 export type Episode = {
@@ -46,6 +47,7 @@ export type Episode = {
 export type EpisodeResponse = GenericPaginationResponse<Episode>;
 
 export type SubscriptionCategory = {
+  id: number;
   name: string;
   icon: string;
 };
