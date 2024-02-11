@@ -5,14 +5,16 @@ from rest_framework.permissions import IsAuthenticated
 from abokistde import sites_wrapper
 from abokistde.models import UserSubscription
 from api.views.publishing_channel import PublishingChannelSerializer
+from api.views.subscription_category import SubscriptionCategorySerializer
 
 
 class UserSubscriptionSerializer(serializers.ModelSerializer):
     publishing_channel = PublishingChannelSerializer(many=False, read_only=True)
+    category = SubscriptionCategorySerializer(many=False, read_only=True)
 
     class Meta:
         model = UserSubscription
-        fields = ['id', 'publishing_channel', 'publishing_channel_id']
+        fields = ['id', 'publishing_channel', 'publishing_channel_id', 'category']
         extra_kwargs = {
             'publishing_channel_id': {'source': 'publishing_channel', 'write_only': True},
         }

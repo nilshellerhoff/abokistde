@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import PublishingChannel, Episode, Provider, Extractor, UserSubscription
+from .models import PublishingChannel, Episode, Provider, Extractor, UserSubscription, SubscriptionCategory
 from abokistde import sites_wrapper
 
 class VideoInline(admin.TabularInline):
@@ -24,3 +24,4 @@ admin.site.register(Provider)
 admin.site.register(PublishingChannel, PublishingChannelAdmin)
 admin.site.register(Episode)
 admin.site.register(UserSubscription)
+admin.site.register(SubscriptionCategory)

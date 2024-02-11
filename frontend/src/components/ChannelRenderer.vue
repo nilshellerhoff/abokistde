@@ -18,28 +18,30 @@
       </q-item-label>
     </q-item-section>
     <q-item-section side>
-      <q-btn
-        v-if="showRemoveSubscription"
-        flat
-        round
-        dense
-        icon="delete"
-        @click.prevent="$emit('unsubscribe', subscription)"
-      />
-      <q-btn
-        v-if="showAddSubscription"
-        flat
-        round
-        dense
-        icon="add"
-        @click.prevent="$emit('subscribe', channel)"
-      />
+      <q-btn flat round dense icon="settings" @click.prevent="alert" />
+      <!--      <q-btn-->
+      <!--        v-if="showRemoveSubscription"-->
+      <!--        flat-->
+      <!--        round-->
+      <!--        dense-->
+      <!--        icon="delete"-->
+      <!--        @click.prevent="$emit('unsubscribe', subscription)"-->
+      <!--      />-->
+      <!--      <q-btn-->
+      <!--        v-if="showAddSubscription"-->
+      <!--        flat-->
+      <!--        round-->
+      <!--        dense-->
+      <!--        icon="add"-->
+      <!--        @click.prevent="$emit('subscribe', channel)"-->
+      <!--      />-->
     </q-item-section>
   </q-item>
 </template>
 
 <script setup lang="ts">
 import { PublishingChannel, UserSubscription } from 'src/types/api';
+import { useQuasar } from 'quasar';
 
 interface Props {
   subscription?: UserSubscription;
@@ -49,6 +51,24 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const $q = useQuasar();
+
+const alert = () => {
+  $q.dialog({
+    title: 'Alert',
+    message: 'Some message',
+  })
+    .onOk(() => {
+      // console.log('OK')
+    })
+    .onCancel(() => {
+      // console.log('Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
 
 const channel = props.channel ?? props.subscription?.publishing_channel;
 </script>

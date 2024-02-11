@@ -44,3 +44,11 @@ export type Episode = {
 };
 
 export type EpisodeResponse = GenericPaginationResponse<Episode>;
+
+export type SubscriptionCategory = {
+  name: string;
+  icon: string;
+};
+
+export type SubscriptionCategoryResponse =
+  GenericPaginationResponse<SubscriptionCategory>;

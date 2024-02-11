@@ -89,14 +89,21 @@ class Episode(models.Model):
     def __str__(self):
         return self.publishing_channel.name + ': ' + self.title
 
+class SubscriptionCategory(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200)
+    icon = models.CharField(max_length=200, blank=True)
+
+    def __str__(self):
+        return self.name
 
 class UserSubscription(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     publishing_channel = models.ForeignKey(PublishingChannel, on_delete=models.CASCADE)
+    category = models.ForeignKey(SubscriptionCategory, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.user.username + ' - ' + self.publishing_channel.name
-
 
 class HiddenEpisode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
