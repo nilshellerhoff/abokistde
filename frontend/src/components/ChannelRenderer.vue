@@ -26,14 +26,6 @@
         icon="settings"
         @click.prevent="alert"
       />
-      <!--      <q-btn-->
-      <!--        v-if="showRemoveSubscription"-->
-      <!--        flat-->
-      <!--        round-->
-      <!--        dense-->
-      <!--        icon="delete"-->
-      <!--        @click.prevent="$emit('unsubscribe', subscription)"-->
-      <!--      />-->
       <q-btn
         v-if="showAddSubscription"
         flat
@@ -68,16 +60,7 @@ const alert = () => {
     componentProps: {
       subscriptionId: props.subscription?.id,
     },
-  })
-    .onOk(() => {
-      // console.log('OK')
-    })
-    .onCancel(() => {
-      // console.log('Cancel')
-    })
-    .onDismiss(() => {
-      // console.log('I am triggered on both OK and Cancel')
-    });
+  });
 };
 
 const channel = props.channel ?? props.subscription?.publishing_channel;

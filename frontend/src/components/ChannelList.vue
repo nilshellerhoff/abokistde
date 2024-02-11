@@ -33,20 +33,6 @@
           )
         "
       />
-      <!--        <q-item>-->
-      <!--          <q-item-label>{{ category?.name ?? 'Uncategorized' }}</q-item-label>-->
-      <!--        </q-item>-->
-
-      <!--        <ChannelRenderer-->
-      <!--          v-for="subscription in subscriptionsFiltered.filter(-->
-      <!--            (s) => s.category_id === (category?.id ?? null)-->
-      <!--          )"-->
-      <!--          :key="subscription.id"-->
-      <!--          :subscription="subscription"-->
-      <!--          show-subscription-settings-->
-      <!--          @unsubscribe="unsubscribe(subscription)"-->
-      <!--        />-->
-
       <q-separator />
 
       <span v-if="searchValue.trim() !== ''">
@@ -108,10 +94,6 @@ const subscriptionCategories = computed(() =>
     'id'
   ).sort((a, b) => (a?.name ?? 'zzz' < b?.name ?? 'zzz' ? -1 : 1))
 );
-// const subscriptionsPerCategory = computed(() => {
-//   const subscriptions = {};
-//   subscriptionCategories.forEach();
-// });
 
 const searchResults = ref([]);
 const isSearching = ref(false);
@@ -181,18 +163,6 @@ const subscribe = (channel: PublishingChannel) => {
     .then(() => {
       fetchSubscriptions();
     });
-};
-
-const unsubscribe = (subscription: UserSubscription) => {
-  if (
-    confirm(
-      `Remove ${subscription.publishing_channel.name} from subscriptions?`
-    )
-  ) {
-    apiClient.delete(`user_subscription/${subscription.id}/`).then(() => {
-      fetchSubscriptions();
-    });
-  }
 };
 
 fetchSubscriptions();

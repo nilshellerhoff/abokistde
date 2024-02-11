@@ -30,7 +30,6 @@
         </table>
       </q-card-section>
 
-      <!-- buttons example -->
       <q-card-actions align="right">
         <q-btn color="negative" label="Remove" @click="onRemoveClick" />
         <q-btn color="primary" label="Save" @click="onSaveClick" />
@@ -44,7 +43,6 @@
 import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { useContentStore } from 'stores/content-store';
 import { UserSubscription } from 'src/types/api';
-import { ref } from 'vue';
 import AddSubscriptionCategoryModal from 'components/Modals/AddSubscriptionCategoryModal.vue';
 
 interface Props {
@@ -87,8 +85,14 @@ const onSaveClick = () => {
 };
 
 const onRemoveClick = () => {
-  contentStore.removeSubscription(subscription.id);
-  onDialogOK();
+  if (
+    confirm(
+      `Remove ${subscription.publishing_channel.name} from subscriptions?`
+    )
+  ) {
+    contentStore.removeSubscription(subscription.id);
+    onDialogOK();
+  }
 };
 
 const onAddCategoryClick = () => {
@@ -100,6 +104,4 @@ const onAddCategoryClick = () => {
 const subscription = contentStore.getSubscriptionById(
   props.subscriptionId
 ) as UserSubscription;
-
-const subscriptionCategoryId = ref(subscription.category);
 </script>
