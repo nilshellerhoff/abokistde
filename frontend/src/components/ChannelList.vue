@@ -26,6 +26,7 @@
       <ChannelListCategory
         v-for="category in subscriptionCategories"
         :key="category?.id ?? null"
+        :id="category?.id ?? 0"
         :name="category?.name ?? 'Uncategorized'"
         :subscriptions="
           subscriptionsFiltered.filter(

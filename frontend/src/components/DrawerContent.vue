@@ -2,18 +2,6 @@
   <q-item
     clickable
     v-ripple
-    :active="$route.name === 'feed'"
-    active-class="active"
-    to="/"
-  >
-    <q-item-section avatar>
-      <q-icon name="subscriptions" />
-    </q-item-section>
-    <q-item-section>Feed</q-item-section>
-  </q-item>
-  <q-item
-    clickable
-    v-ripple
     :active="$route.name === 'favorites'"
     active-class="active"
     to="/favorites"
@@ -25,6 +13,20 @@
   </q-item>
 
   <q-separator />
+
+  <q-item
+    clickable
+    v-ripple
+    :active="$route.name === 'feed'"
+    active-class="active"
+    to="/"
+  >
+    <q-item-section avatar>
+      <q-icon name="subscriptions" />
+    </q-item-section>
+    <q-item-section>Feed</q-item-section>
+  </q-item>
+
   <div style="height: calc(100% - 104px)">
     <ChannelList />
   </div>

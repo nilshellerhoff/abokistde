@@ -12,6 +12,11 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/FeedPage.vue'),
       },
       {
+        path: 'feed/:id',
+        name: 'feedCategory',
+        component: () => import('pages/FeedCategoryPage.vue'),
+      },
+      {
         path: 'favorites',
         name: 'favorites',
         component: () => import('pages/FavoritesPage.vue'),

@@ -5,6 +5,7 @@
     expand-separator
     :group="isSearching ? null : 'subscriptionCategories'"
     v-model="isExpanded"
+    :to="isSearching ? null : `/feed/${id}`"
   >
     <ChannelRenderer
       v-for="subscription in subscriptions"
@@ -21,6 +22,7 @@ import ChannelRenderer from 'components/ChannelRenderer.vue';
 import { ref, watch } from 'vue';
 
 interface Props {
+  id: number;
   name: string;
   subscriptions: any[];
   isSearching: boolean;

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from abokistde.models import Episode
+from api.views import publishing_channel
 from api.views.publishing_channel import PublishingChannelSerializer
 
 
@@ -35,6 +36,7 @@ class EpisodeFilter(FilterSet):
     is_subscribed = BooleanFilter(method='filter_is_subscribed')
     is_favorited = BooleanFilter(method='filter_is_favorited')
     publishing_channel_id = filterset.NumberFilter(field_name='publishing_channel__id')
+    category_id = filterset.NumberFilter(method='filter_category')
 
     def filter_is_hidden(self, queryset, name, value):
         if value is not None:
@@ -61,6 +63,14 @@ class EpisodeFilter(FilterSet):
             else:
                 queryset = queryset.exclude(favoriteepisode__user=self.request.user)
 
+        return queryset
+
+    def filter_category(self, queryset, name, value):
+        if value is not None:
+            if value == 0:
+                queryset = queryset.filter(publishing_channel__usersubscription__category__id=None)
+            else:
+                queryset = queryset.filter(publishing_channel__usersubscription__category__id=value)
         return queryset
 
 

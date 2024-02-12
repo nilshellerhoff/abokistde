@@ -3,6 +3,7 @@
     <ChannelRenderer
       v-if="props.showChannelHeader"
       :channel="props.episode?.publishing_channel"
+      show-channel-link
     />
     <a :href="episode?.url" target="_blank" class="nolink cursor-pointer">
       <q-img

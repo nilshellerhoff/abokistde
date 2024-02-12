@@ -34,6 +34,14 @@
         icon="add"
         @click.prevent="$emit('subscribe', channel)"
       />
+      <q-btn
+        v-if="showChannelLink"
+        flat
+        round
+        dense
+        icon="info"
+        :to="`/channel/${channel.id}`"
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -48,6 +56,7 @@ interface Props {
   channel?: PublishingChannel;
   showSubscriptionSettings?: boolean;
   showAddSubscription?: boolean;
+  showChannelLink?: boolean;
 }
 
 const props = defineProps<Props>();
