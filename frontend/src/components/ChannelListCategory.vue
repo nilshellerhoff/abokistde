@@ -1,5 +1,10 @@
 <template>
-  <q-expansion-item :label="name" expand-separator>
+  <q-expansion-item
+    :label="name"
+    expand-separator
+    :group="isSearching ? null : 'subscriptionCategories'"
+    v-model="isExpanded"
+  >
     <ChannelRenderer
       v-for="subscription in subscriptions"
       :key="subscription.id"
@@ -12,12 +17,22 @@
 
 <script setup lang="ts">
 import ChannelRenderer from 'components/ChannelRenderer.vue';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 interface Props {
   name: string;
   subscriptions: any[];
+  isSearching: boolean;
 }
 
 const props = defineProps<Props>();
+
+const isExpanded = ref(false);
+
+watch(
+  () => props.isSearching,
+  () => {
+    isExpanded.value = props.isSearching;
+  }
+);
 </script>

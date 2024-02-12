@@ -32,6 +32,7 @@
             (s) => s.category_id === (category?.id ?? null)
           )
         "
+        :is-searching="searchValue != ''"
       />
       <q-separator />
 
