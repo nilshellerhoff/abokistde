@@ -5,7 +5,12 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', name: 'feed', component: () => import('pages/FeedPage.vue') },
+      { path: '', redirect: '/feed' },
+      {
+        path: 'feed',
+        name: 'feed',
+        component: () => import('pages/FeedPage.vue'),
+      },
       {
         path: 'favorites',
         name: 'favorites',
