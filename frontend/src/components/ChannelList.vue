@@ -19,7 +19,7 @@
     </q-input>
   </q-item>
   <div style="height: calc(100% - 72px - 48px); overflow-y: scroll">
-    <div v-if="isLoading" class="mx-auto">
+    <div v-if="contentStore.subscriptionsIsLoading" class="mx-auto">
       <loading-indicator style="width: 40px"></loading-indicator>
     </div>
     <q-list>
@@ -72,16 +72,16 @@ import LoadingIndicator from 'components/LoadingIndicator.vue';
 import { apiClient } from 'src/util/api';
 import ChannelRenderer from 'components/ChannelRenderer.vue';
 import _ from 'lodash';
-import { PublishingChannel, UserSubscription } from 'src/types/api';
-import { uniqOn } from 'src/util/array';
+import { PublishingChannel } from 'src/types/api';
 import ChannelListCategory from 'components/ChannelListCategory.vue';
+import { useContentStore } from 'stores/content-store';
+
+const contentStore = useContentStore();
 
 const searchValue = ref('');
 
-const isLoading = ref(0);
+const subscriptions = computed(() => contentStore.subscriptions);
 
-const channels = ref([]);
-const subscriptions = ref([]);
 const subscriptionsFiltered = computed(() => {
   return subscriptions.value.filter((s) =>
     s.publishing_channel.name
@@ -90,28 +90,13 @@ const subscriptionsFiltered = computed(() => {
   );
 });
 
-const subscriptionCategories = computed(() =>
-  uniqOn(
-    subscriptions.value.map((s) => s.category),
-    'id'
-  ).sort((a, b) => (a?.name ?? 'zzz' < b?.name ?? 'zzz' ? -1 : 1))
-);
+const subscriptionCategories = computed(() => [
+  ...contentStore.subscriptionCategories,
+  { id: null, name: 'Uncategorized' },
+]);
 
 const searchResults = ref([]);
 const isSearching = ref(false);
-
-const fetchSubscriptions = () => {
-  isLoading.value++;
-  apiClient
-    .get('/user_subscription/')
-    .then((response) => {
-      subscriptions.value = response.data.results;
-      channels.value = response.data.results.map((s) => s.publishing_channel);
-    })
-    .finally(() => {
-      isLoading.value--;
-    });
-};
 
 const search = () => {
   searchResults.value = [];
@@ -158,14 +143,9 @@ const searchOnline = () => {
 };
 
 const subscribe = (channel: PublishingChannel) => {
-  apiClient
-    .post('user_subscription/', {
-      publishing_channel_id: channel.id,
-    })
-    .then(() => {
-      fetchSubscriptions();
-    });
+  contentStore.addSubscription({
+    publishing_channel_id: channel.id,
+    category_id: null,
+  });
 };
-
-fetchSubscriptions();
 </script>

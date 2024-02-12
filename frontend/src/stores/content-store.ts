@@ -11,12 +11,14 @@ import { apiClient } from 'src/util/api';
 interface ContentStore {
   subscriptionCategories: SubscriptionCategory[];
   subscriptions: UserSubscription[];
+  subscriptionsIsLoading: boolean;
 }
 
 export const useContentStore = defineStore('content', {
   state: (): ContentStore => ({
     subscriptionCategories: [],
     subscriptions: [],
+    subscriptionsIsLoading: false,
   }),
   actions: {
     init() {
@@ -28,6 +30,11 @@ export const useContentStore = defineStore('content', {
       return this.subscriptions.find((s) => s.id === id);
     },
     // adders
+    addSubscription(subscription: UserSubscriptionUpdate) {
+      apiClient.post('/user_subscription/', subscription).then(() => {
+        this.loadSubscriptions();
+      });
+    },
     addSubscriptionCategory(category: Partial<SubscriptionCategory>) {
       apiClient.post('/subscription_category/', category).then(() => {
         this.loadCategories();
@@ -54,10 +61,14 @@ export const useContentStore = defineStore('content', {
         });
     },
     loadSubscriptions() {
+      this.subscriptionsIsLoading = true;
       apiClient
         .get<GenericPaginationResponse<UserSubscription>>('/user_subscription/')
         .then((response) => {
           this.subscriptions = response.data.results;
+        })
+        .finally(() => {
+          this.subscriptionsIsLoading = false;
         });
     },
   },
