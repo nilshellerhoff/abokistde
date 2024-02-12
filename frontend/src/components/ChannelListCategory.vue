@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    v-if="subscriptions.length > 0"
     :label="name"
     expand-separator
     :group="isSearching ? null : 'subscriptionCategories'"
