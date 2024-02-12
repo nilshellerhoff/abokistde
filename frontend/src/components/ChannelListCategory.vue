@@ -1,19 +1,5 @@
 <template>
-  <q-item clickable @click="toggleExpansion">
-    <q-item-section>
-      <q-item-label>{{ name }}</q-item-label>
-    </q-item-section>
-    <q-item-section side>
-      <q-btn
-        flat
-        round
-        dense
-        :icon="isExpanded ? 'expand_less' : 'expand_more'"
-      />
-    </q-item-section>
-  </q-item>
-
-  <span v-if="isExpanded">
+  <q-expansion-item :label="name" expand-separator>
     <ChannelRenderer
       v-for="subscription in subscriptions"
       :key="subscription.id"
@@ -21,7 +7,7 @@
       show-subscription-settings
       @unsubscribe="$emit('unsubscribe', subscription)"
     />
-  </span>
+  </q-expansion-item>
 </template>
 
 <script setup lang="ts">
@@ -34,8 +20,4 @@ interface Props {
 }
 
 const props = defineProps<Props>();
-
-const isExpanded = ref(true);
-
-const toggleExpansion = () => (isExpanded.value = !isExpanded.value);
 </script>
