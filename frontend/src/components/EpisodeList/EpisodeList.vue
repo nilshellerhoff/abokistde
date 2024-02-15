@@ -1,12 +1,35 @@
 <template>
-  <div class="row q-pa-md">
+  <div class="row q-pa-lg">
     <q-toggle
       v-model="showHidden"
       label="Show hidden"
       @update:model-value="onMounted"
     />
+    <q-space />
+    <span>
+      <q-input
+        borderless
+        dense
+        hide-bottom-space
+        style="width: 120px"
+        readonly
+        v-model="localSettingsStore.episodeListMaxNumberOfColumns"
+      >
+        <template #before> <q-icon name="view_column" /></template>
+        <template #prepend>
+          <q-btn icon="remove" dense @click="decreaseColumnNumber"></q-btn>
+        </template>
+        <template #append>
+          <q-btn icon="add" dense @click="increaseColumnNumber"></q-btn>
+        </template>
+      </q-input>
+      <q-tooltip>Maximum number of columns</q-tooltip>
+    </span>
   </div>
-  <div class="row items-start justify-center q-pa-md q-gutter-md episode-grid">
+  <div
+    class="row items-start justify-center q-pa-sm q-mx-auto q-gutter-md episode-grid"
+    :style="{ width: columnWrapperWidth + 'px', maxWidth: '100%' }"
+  >
     <episode-list-item
       v-for="episode in episodes"
       :key="episode.id"
@@ -45,13 +68,13 @@
 </template>
 
 <script setup lang="ts">
-// inject: ["channelFilter", "updateEpisodesCounter", "updateChannelsCounter"],
 import { Ref, ref, watch } from 'vue';
 import EpisodeListItem from 'components/EpisodeList/EpisodeListItem.vue';
 import { apiClient } from 'src/util/api';
 import { Episode, EpisodeResponse } from 'src/types/api';
 import LoadingIndicator from 'components/LoadingIndicator.vue';
 import { objectsDiffer } from 'src/util/object';
+import { useLocalSettingsStore } from 'stores/local-settings-store';
 
 interface Props {
   episodeApiParams?: any; // TODO
@@ -62,16 +85,14 @@ const props = withDefaults(defineProps<Props>(), {
   showChannelHeader: true,
 });
 
+const localSettingsStore = useLocalSettingsStore();
+
 const isLoading = ref(0);
 const currentOffset = ref(0);
 const pageSize = ref(48);
 const episodes: Ref<Episode[]> = ref([]);
 const showHidden = ref(false);
 const isEpisodesLeft = ref(true);
-
-const episodeCardBaseWidth = 300;
-const episodeCardWidth =
-  window.innerWidth >= 2 * episodeCardBaseWidth ? 300 : window.innerWidth;
 
 const fetchEpisodes = () => {
   isLoading.value++;
@@ -139,6 +160,28 @@ watch(
   },
   { deep: true }
 );
+
+const episodeCardBaseWidth = 300;
+const episodeCardWidth =
+  window.innerWidth >= 2 * episodeCardBaseWidth ? 300 : window.innerWidth;
+
+const calculateColumnWrapperWidth = () =>
+  localSettingsStore.episodeListMaxNumberOfColumns * (episodeCardWidth + 16) +
+  16;
+
+const columnWrapperWidth = ref(calculateColumnWrapperWidth());
+
+const increaseColumnNumber = () => {
+  localSettingsStore.episodeListMaxNumberOfColumns =
+    localSettingsStore.episodeListMaxNumberOfColumns + 1;
+  columnWrapperWidth.value = calculateColumnWrapperWidth();
+};
+
+const decreaseColumnNumber = () => {
+  localSettingsStore.episodeListMaxNumberOfColumns =
+    localSettingsStore.episodeListMaxNumberOfColumns - 1;
+  columnWrapperWidth.value = calculateColumnWrapperWidth();
+};
 </script>
 
 <style>
