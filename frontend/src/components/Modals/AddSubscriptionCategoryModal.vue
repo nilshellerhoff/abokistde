@@ -22,6 +22,7 @@
           label="Save"
           @click="onSaveClick"
           :disable="!categoryName"
+          :loading="isSaveLoading"
         />
         <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
       </q-card-actions>
@@ -30,9 +31,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDialogPluginComponent } from 'quasar';
+import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { useContentStore } from 'stores/content-store';
 import { ref } from 'vue';
+
+const $q = useQuasar();
 
 defineEmits([
   // REQUIRED; need to specify some events that your
@@ -49,19 +52,30 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 //                    example: onDialogOK({ /*...*/ }) - with payload
 // onDialogCancel - Function to call to settle dialog with "cancel" outcome
 
-// this is part of our example (so not required)
+const isSaveLoading = ref(false);
+
 const onSaveClick = () => {
   if (!categoryName.value) {
     return;
   }
-  contentStore.addSubscriptionCategory({
-    name: categoryName.value,
-  });
-  // on OK, it is REQUIRED to
-  // call onDialogOK (with optional payload)
-  onDialogOK();
-  // or with payload: onDialogOK({ ... })
-  // ...and it will also hide the dialog automatically
+  isSaveLoading.value = true;
+  contentStore
+    .addSubscriptionCategory({
+      name: categoryName.value,
+    })
+    .then(() => {
+      onDialogOK();
+    })
+    .catch((error) => {
+      console.error(error);
+      $q.notify({
+        type: 'negative',
+        message: 'Error adding subscription category',
+      });
+    })
+    .finally(() => {
+      isSaveLoading.value = false;
+    });
 };
 
 const categoryName = ref(null);

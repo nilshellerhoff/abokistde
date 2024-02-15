@@ -32,7 +32,12 @@
 
       <q-card-actions align="right">
         <q-btn color="negative" label="Remove" @click="onRemoveClick" />
-        <q-btn color="primary" label="Save" @click="onSaveClick" />
+        <q-btn
+          color="primary"
+          label="Save"
+          :loading="isSaveLoading"
+          @click="onSaveClick"
+        />
         <q-btn color="primary" label="Cancel" @click="onDialogCancel" />
       </q-card-actions>
     </q-card>
@@ -44,6 +49,7 @@ import { useDialogPluginComponent, useQuasar } from 'quasar';
 import { useContentStore } from 'stores/content-store';
 import { UserSubscription } from 'src/types/api';
 import AddSubscriptionCategoryModal from 'components/Modals/AddSubscriptionCategoryModal.vue';
+import { ref } from 'vue';
 
 interface Props {
   subscriptionId: number;
@@ -70,16 +76,30 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } =
 //                    example: onDialogOK({ /*...*/ }) - with payload
 // onDialogCancel - Function to call to settle dialog with "cancel" outcome
 
+const isSaveLoading = ref(false);
+
 // this is part of our example (so not required)
 const onSaveClick = () => {
-  console.log('saving');
-  contentStore.updateSubscription(subscription.id, {
-    publishing_channel_id: subscription.publishing_channel_id,
-    category_id: subscription.category_id,
-  });
+  isSaveLoading.value = true;
+  contentStore
+    .updateSubscription(subscription.id, {
+      publishing_channel_id: subscription.publishing_channel_id,
+      category_id: subscription.category_id,
+    })
+    .then(() => {
+      onDialogOK();
+    })
+    .catch(() => {
+      $q.notify({
+        type: 'negative',
+        message: 'Failed to save settings',
+      });
+    })
+    .finally(() => {
+      isSaveLoading.value = false;
+    });
   // on OK, it is REQUIRED to
   // call onDialogOK (with optional payload)
-  onDialogOK();
   // or with payload: onDialogOK({ ... })
   // ...and it will also hide the dialog automatically
 };

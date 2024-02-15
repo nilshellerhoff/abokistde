@@ -31,30 +31,32 @@ export const useContentStore = defineStore('content', {
     },
     // adders
     addSubscription(subscription: UserSubscriptionUpdate) {
-      apiClient.post('/user_subscription/', subscription).then(() => {
+      return apiClient.post('/user_subscription/', subscription).then(() => {
         this.loadSubscriptions();
       });
     },
     addSubscriptionCategory(category: Partial<SubscriptionCategory>) {
-      apiClient.post('/subscription_category/', category).then(() => {
+      return apiClient.post('/subscription_category/', category).then(() => {
         this.loadCategories();
       });
     },
     // updaters
     updateSubscription(id: number, subscription: UserSubscriptionUpdate) {
-      apiClient.put(`/user_subscription/${id}/`, subscription).then(() => {
-        this.loadSubscriptions();
-      });
+      return apiClient
+        .put(`/user_subscription/${id}/`, subscription)
+        .then(() => {
+          this.loadSubscriptions();
+        });
     },
     // removers
     removeSubscription(id: number) {
-      apiClient.delete(`/user_subscription/${id}/`).then(() => {
+      return apiClient.delete(`/user_subscription/${id}/`).then(() => {
         this.loadSubscriptions();
       });
     },
     // loaders
     loadCategories() {
-      apiClient
+      return apiClient
         .get<SubscriptionCategoryResponse>('/subscription_category/')
         .then((response) => {
           this.subscriptionCategories = response.data.results;
@@ -62,7 +64,7 @@ export const useContentStore = defineStore('content', {
     },
     loadSubscriptions() {
       this.subscriptionsIsLoading = true;
-      apiClient
+      return apiClient
         .get<GenericPaginationResponse<UserSubscription>>('/user_subscription/')
         .then((response) => {
           this.subscriptions = response.data.results;
