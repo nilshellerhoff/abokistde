@@ -17,10 +17,10 @@
       >
         <template #before> <q-icon name="view_column" /></template>
         <template #prepend>
-          <q-btn icon="remove" dense @click="decreaseColumnNumber"></q-btn>
+          <q-btn icon="remove" flat dense @click="decreaseColumnNumber"></q-btn>
         </template>
         <template #append>
-          <q-btn icon="add" dense @click="increaseColumnNumber"></q-btn>
+          <q-btn icon="add" flat dense @click="increaseColumnNumber"></q-btn>
         </template>
       </q-input>
       <q-tooltip>Maximum number of columns</q-tooltip>
