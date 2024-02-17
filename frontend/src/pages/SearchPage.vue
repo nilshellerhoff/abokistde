@@ -1,7 +1,10 @@
-<template>You searched {{ $route.params.query }}</template>
+<template>
+  <search-results :search-value="$route.params.query" />
+</template>
 
 <script setup lang="ts">
 import { useRoute } from 'vue-router';
+import SearchResults from 'components/SearchResults.vue';
 
 const route = useRoute();
 

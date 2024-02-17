@@ -1,15 +1,10 @@
 <template>
-  <q-item-label header>Subscriptions</q-item-label>
   <q-item>
     <q-input
-      outlined
+      dense
       v-model="searchValue"
-      @update:model-value="
-        isSearching = true;
-        searchDebounced();
-      "
       @clear="searchValue = ''"
-      placeholder="Search channels"
+      placeholder="Filter subscriptions"
       clearable
       style="width: 100%"
     >
@@ -18,7 +13,7 @@
       </template>
     </q-input>
   </q-item>
-  <div style="height: calc(100% - 72px - 48px); overflow-y: scroll">
+  <div style="height: calc(100% - 56px); overflow-y: scroll">
     <div v-if="contentStore.subscriptionsIsLoading" class="mx-auto">
       <loading-indicator style="width: 40px"></loading-indicator>
     </div>
@@ -35,32 +30,6 @@
         "
         :is-searching="searchValue != ''"
       />
-      <q-separator />
-
-      <span v-if="searchValue.trim() !== ''">
-        <q-item-label header>Search Results</q-item-label>
-        <span v-if="isSearching">
-          <q-item class="text-center">
-            <loading-indicator
-              class="mx-auto"
-              style="width: 40px"
-            ></loading-indicator>
-          </q-item>
-        </span>
-        <span v-else>
-          <q-item class="text-center">
-            <q-btn @click="searchOnline">Search on Youtube</q-btn>
-          </q-item>
-          <ChannelRenderer
-            v-for="channel in searchResults"
-            :key="channel.id"
-            :channel="channel"
-            :show-add-subscription="
-              !subscriptions.find((s) => s.publishing_channel.id === channel.id)
-            "
-            @subscribe="subscribe(channel)"
-        /></span>
-      </span>
     </q-list>
   </div>
   <q-separator />
@@ -69,10 +38,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import LoadingIndicator from 'components/LoadingIndicator.vue';
-import { apiClient } from 'src/util/api';
-import ChannelRenderer from 'components/ChannelRenderer.vue';
-import _ from 'lodash';
-import { PublishingChannel } from 'src/types/api';
 import ChannelListCategory from 'components/ChannelListCategory.vue';
 import { useContentStore } from 'stores/content-store';
 
@@ -94,58 +59,4 @@ const subscriptionCategories = computed(() => [
   ...contentStore.subscriptionCategories,
   { id: null, name: 'Uncategorized' },
 ]);
-
-const searchResults = ref([]);
-const isSearching = ref(false);
-
-const search = () => {
-  searchResults.value = [];
-  if (searchValue.value.trim() !== '') {
-    isSearching.value = true;
-    apiClient
-      .get('/publishing_channel/', {
-        params: {
-          search: searchValue.value.trim(),
-        },
-      })
-      .then((response) => {
-        searchResults.value = response.data.results;
-      })
-      .finally(() => {
-        isSearching.value = false;
-      });
-  }
-};
-
-const searchDebounced = _.debounce(function () {
-  console.log('search debounced');
-  search();
-}, 500);
-
-const searchOnline = () => {
-  searchResults.value = [];
-  if (searchValue.value.trim() !== '') {
-    isSearching.value = true;
-    apiClient
-      .get('/search_online/', {
-        params: {
-          query: searchValue.value.trim(),
-        },
-      })
-      .then((response) => {
-        searchResults.value = response.data.data;
-        isSearching.value = false;
-      })
-      .catch(() => {
-        isSearching.value = false;
-      });
-  }
-};
-
-const subscribe = (channel: PublishingChannel) => {
-  contentStore.addSubscription({
-    publishing_channel_id: channel.id,
-    category_id: null,
-  });
-};
 </script>

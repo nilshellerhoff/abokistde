@@ -2,7 +2,7 @@
   <q-item clickable :to="`/channel/${channel.id}`">
     <q-item-section avatar>
       <q-avatar>
-        <q-img :src="channel.thumbnail_url">
+        <q-img :src="channel.thumbnail_url" referrerpolicy="no-referrer">
           <template v-slot:error>
             <q-icon name="person" />
           </template>
@@ -32,7 +32,7 @@
         round
         dense
         icon="add"
-        @click.prevent="$emit('subscribe', channel)"
+        @click.prevent="subscribe"
       />
       <q-btn
         v-if="showChannelLink"
@@ -50,6 +50,9 @@
 import { PublishingChannel, UserSubscription } from 'src/types/api';
 import { useQuasar } from 'quasar';
 import SubscriptionSettingsModal from 'components/Modals/SubscriptionSettingsModal.vue';
+import { useContentStore } from 'stores/content-store';
+
+const contentStore = useContentStore();
 
 interface Props {
   subscription?: UserSubscription;
@@ -70,6 +73,15 @@ const alert = () => {
       subscriptionId: props.subscription?.id,
     },
   });
+};
+
+const subscribe = () => {
+  if (props.channel) {
+    contentStore.addSubscription({
+      publishing_channel_id: props.channel.id,
+      category_id: null,
+    });
+  }
 };
 
 const channel = props.channel ?? props.subscription?.publishing_channel;

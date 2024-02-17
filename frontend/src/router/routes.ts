@@ -27,7 +27,7 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/ChannelPage.vue'),
       },
       {
-        path: 'search/:query',
+        path: 'search/:query?',
         name: 'search',
         component: () => import('pages/SearchPage.vue'),
       },
