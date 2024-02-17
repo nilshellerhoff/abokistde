@@ -13,6 +13,7 @@
     autofocus
     dark
     @keyup.enter="$router.push(`/search/${searchQuery}`)"
+    
   >
     <template #prepend>
       <q-icon name="search" />

@@ -1,13 +1,11 @@
 <template>
-  <q-list style="max-width: 800px" class="q-mx-auto">
-    <q-item v-for="result in searchResults" :key="result.id">
-      <q-item-section>
-        <channel-renderer
-          :channel="result"
-          :show-add-subscription="!isSubscribed(result.id)"
-        />
-      </q-item-section>
-    </q-item>
+  <q-list style="width: 100%; max-width: 800px" class="q-mx-auto">
+    <channel-renderer
+      v-for="result in searchResults"
+      :key="result.id"
+      :channel="result"
+      :show-add-subscription="!isSubscribed(result.id)"
+    />
     <q-item v-if="isSearching || isSearchingOnline" class="q-pa-md">
       <loading-indicator style="width: 40px" />
     </q-item>
