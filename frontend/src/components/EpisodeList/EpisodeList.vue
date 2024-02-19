@@ -1,9 +1,12 @@
 <template>
   <div class="row q-pa-lg">
+    <q-btn flat icon="refresh" @click="loadEpisodes">
+      <q-tooltip>Refresh</q-tooltip>
+    </q-btn>
     <q-toggle
       v-model="showHidden"
       label="Show hidden"
-      @update:model-value="onMounted"
+      @update:model-value="loadEpisodes"
     />
     <q-space />
     <span>
@@ -142,12 +145,12 @@ const favoriteEpisode = (episode: Episode) => {
   });
 };
 
-const onMounted = () => {
+const loadEpisodes = () => {
   resetEpisodes();
   fetchEpisodes();
 };
 
-onMounted();
+loadEpisodes();
 
 watch(
   () => props.episodeApiParams,
@@ -155,7 +158,7 @@ watch(
     console.log('episodeApiParams changed');
     // somehow needed, scrolling on iPad otherwise triggered this watch
     if (objectsDiffer(newValue, oldValue)) {
-      onMounted();
+      loadEpisodes();
     }
   },
   { deep: true }
