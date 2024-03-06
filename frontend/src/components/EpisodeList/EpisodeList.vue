@@ -9,6 +9,7 @@
       @update:model-value="loadEpisodes"
     />
     <q-space />
+    <CardWidthSelector />
     <span>
       <q-input
         borderless
@@ -71,13 +72,14 @@
 </template>
 
 <script setup lang="ts">
-import { Ref, ref, watch } from 'vue';
+import { computed, Ref, ref, watch } from 'vue';
 import EpisodeListItem from 'components/EpisodeList/EpisodeListItem.vue';
 import { apiClient } from 'src/util/api';
 import { Episode, EpisodeResponse } from 'src/types/api';
 import LoadingIndicator from 'components/LoadingIndicator.vue';
 import { objectsDiffer } from 'src/util/object';
 import { useLocalSettingsStore } from 'stores/local-settings-store';
+import CardWidthSelector from 'components/EpisodeList/CardWidthSelector.vue';
 
 interface Props {
   episodeApiParams?: any; // TODO
@@ -164,12 +166,15 @@ watch(
   { deep: true }
 );
 
-const episodeCardBaseWidth = 300;
-const episodeCardWidth =
-  window.innerWidth >= 2 * episodeCardBaseWidth ? 300 : window.innerWidth;
+const episodeCardWidth = computed(() => {
+  return window.innerWidth >= 2 * localSettingsStore.episodeListEpisodeCardWidth
+    ? localSettingsStore.episodeListEpisodeCardWidth
+    : window.innerWidth;
+});
 
 const calculateColumnWrapperWidth = () =>
-  localSettingsStore.episodeListMaxNumberOfColumns * (episodeCardWidth + 16) +
+  localSettingsStore.episodeListMaxNumberOfColumns *
+    (episodeCardWidth.value + 16) +
   16;
 
 const columnWrapperWidth = ref(calculateColumnWrapperWidth());

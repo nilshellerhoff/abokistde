@@ -1,14 +1,25 @@
 import { defineStore } from 'pinia';
-import { useLocalStorage } from '@vueuse/core';
+import { RemovableRef, useLocalStorage } from '@vueuse/core';
 
-import { Quasar, Platform, Dark } from 'quasar';
+import { Dark } from 'quasar';
+import { SubscriptionCategory, UserSubscription } from 'src/types/api';
+
+interface LocalSettingsStore {
+  darkMode: RemovableRef<boolean>;
+  episodeListMaxNumberOfColumns: RemovableRef<number>;
+  episodeListEpisodeCardWidth: RemovableRef<number>;
+}
 
 export const useLocalSettingsStore = defineStore('localSettings', {
-  state: () => ({
+  state: (): LocalSettingsStore => ({
     darkMode: useLocalStorage('localSettingsdarkMode', false),
     episodeListMaxNumberOfColumns: useLocalStorage(
       'episodeListMaxNumberOfColumns',
       5
+    ),
+    episodeListEpisodeCardWidth: useLocalStorage(
+      'episodelistEpisodeCardWidth',
+      300
     ),
   }),
   getters: {
