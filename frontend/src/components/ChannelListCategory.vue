@@ -1,12 +1,22 @@
 <template>
   <q-expansion-item
     v-if="subscriptions.length > 0"
-    :label="name"
     expand-separator
     :group="isSearching ? null : 'subscriptionCategories'"
     v-model="isExpanded"
     :to="isSearching ? null : `/feed/${id}`"
+    dense
   >
+    <template #header>
+      <q-item-section>
+        <q-item-label header>
+          {{ name }}
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-btn icon="play_arrow" flat dense />
+      </q-item-section>
+    </template>
     <ChannelRenderer
       v-for="subscription in subscriptions"
       :key="subscription.id"
