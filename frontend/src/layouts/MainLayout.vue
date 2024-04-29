@@ -13,7 +13,7 @@
         />
         <div style="height: 50px" class="q-ma-sm" />
 
-        <header-search />
+        <header-logo />
         <header-menu />
       </q-toolbar>
     </q-header>
@@ -32,7 +32,7 @@
 import { ref } from 'vue';
 import DrawerContent from 'components/DrawerContent.vue';
 import HeaderMenu from 'components/HeaderBar/HeaderMenu.vue';
-import HeaderSearch from 'components/HeaderBar/HeaderSearch.vue';
+import HeaderLogo from 'components/HeaderBar/HeaderLogo.vue';
 
 const leftDrawerOpen = ref(false);
 

@@ -2,6 +2,19 @@
   <q-item
     clickable
     v-ripple
+    :active="$route.name === 'search'"
+    active-class="active"
+    to="/search"
+  >
+    <q-item-section avatar>
+      <q-icon name="search" />
+    </q-item-section>
+    <q-item-section>Search</q-item-section>
+  </q-item>
+
+  <q-item
+    clickable
+    v-ripple
     :active="$route.name === 'favorites'"
     active-class="active"
     to="/favorites"
@@ -11,8 +24,6 @@
     </q-item-section>
     <q-item-section>Favorites</q-item-section>
   </q-item>
-
-  <q-separator />
 
   <q-item
     clickable
