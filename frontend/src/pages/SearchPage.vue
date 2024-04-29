@@ -1,5 +1,8 @@
 <template>
-  <q-list style="width: 100%; max-width: 800px" class="q-mx-auto q-my-lg">
+  <q-list
+    style="width: 100%; max-width: 800px"
+    class="q-mx-auto q-my-lg q-pa-sm"
+  >
     <q-input
       v-model="query"
       style="width: 100%"
