@@ -22,7 +22,7 @@
       <DrawerContent />
     </q-drawer>
 
-    <q-footer elevated class="sm">
+    <q-footer elevated class="lt-md">
       <q-tabs>
         <q-route-tab name="feed" icon="subscriptions" to="/feed" />
         <q-route-tab name="favorites" icon="favorite" to="/favorites" />
