@@ -24,7 +24,7 @@
         round
         dense
         icon="settings"
-        @click.prevent="alert"
+        @click.prevent="openSubscriptionSettingsModal"
       />
       <q-btn
         v-if="showAddSubscription"
@@ -66,7 +66,7 @@ const props = defineProps<Props>();
 
 const $q = useQuasar();
 
-const alert = () => {
+const openSubscriptionSettingsModal = () => {
   $q.dialog({
     component: SubscriptionSettingsModal,
     componentProps: {

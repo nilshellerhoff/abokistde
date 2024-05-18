@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import {
   GenericPaginationResponse,
+  PublishingChannel,
   SubscriptionCategory,
   SubscriptionCategoryResponse,
   UserSubscription,
@@ -28,6 +29,13 @@ export const useContentStore = defineStore('content', {
     // getters
     getSubscriptionById(id: number) {
       return this.subscriptions.find((s) => s.id === id);
+    },
+    getSubscriptionByChannel(
+      channel: PublishingChannel
+    ): UserSubscription | undefined {
+      return this.subscriptions.find(
+        (s) => s.publishing_channel.id == channel.id
+      );
     },
     // adders
     addSubscription(subscription: UserSubscriptionUpdate) {

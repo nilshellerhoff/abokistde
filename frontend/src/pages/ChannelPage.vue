@@ -1,7 +1,13 @@
 <template>
   <span v-if="channelId">
     <ChannelPageHeader v-if="channel" :channel="channel" />
+    <LoadingIndicator
+      v-if="!hasUpdatedChannelEpisodes"
+      style="width: 40px"
+      class="q-mx-auto q-my-lg"
+    />
     <EpisodeList
+      v-else
       :showChannelHeader="false"
       :episode-api-params="episodeApiParams"
     />
@@ -15,6 +21,7 @@ import { useRoute } from 'vue-router';
 import { PublishingChannel } from 'src/types/api';
 import ChannelPageHeader from 'components/ChannelPageHeader.vue';
 import EpisodeList from 'components/EpisodeList/EpisodeList.vue';
+import LoadingIndicator from 'components/LoadingIndicator.vue';
 
 const route = useRoute();
 
@@ -23,6 +30,19 @@ const channel: Ref<PublishingChannel | null> = ref(null);
 const episodeApiParams = ref({
   publishing_channel_id: channelId.value,
 });
+
+const hasUpdatedChannelEpisodes = ref(false);
+
+const updateChannelEpisodes = () => {
+  apiClient
+    .post(`/publishing_channel/${channelId.value}/update_episodes/`)
+    .then(() => {
+      episodeApiParams.value = {
+        publishing_channel_id: route.params.id,
+      };
+      hasUpdatedChannelEpisodes.value = true;
+    });
+};
 
 const getChannelInformation = () => {
   apiClient
@@ -40,11 +60,8 @@ watch(
   () => route.params.id,
   () => {
     getChannelInformation();
-    episodeApiParams.value = {
-      publishing_channel_id: route.params.id,
-    };
-  }
+    updateChannelEpisodes();
+  },
+  { immediate: true }
 );
-
-getChannelInformation();
 </script>
