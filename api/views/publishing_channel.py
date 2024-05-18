@@ -18,6 +18,7 @@ class PublishingChannelSerializer(serializers.HyperlinkedModelSerializer):
 class PublishingChannelViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = PublishingChannel.objects.all()
     serializer_class = PublishingChannelSerializer
+    permission_classes = [IsAuthenticated]
     filterset_fields = ['name']
     search_fields = ['name', 'description']
 
