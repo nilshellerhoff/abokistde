@@ -10,6 +10,18 @@ class PublishingChannelAdmin(admin.ModelAdmin):
     inlines = [VideoInline]
     model = PublishingChannel
     search_fields = ['name', 'provider__name']
+    list_display = ('name', 'provider', 'get_extractor')
+    list_filter = ['provider__extractor']
+
+    def get_extractor(self, obj: PublishingChannel):
+        return obj.provider.extractor
+
+class ProviderAdmin(admin.ModelAdmin):
+    model = Provider
+    search_fields = ['name']
+    list_display = ('name', 'extractor')
+    list_filter = ('extractor',)
+
 
 def fetch_data(modeladmin, request, queryset):
     for extractor in queryset:
@@ -20,7 +32,7 @@ class ExtractorAdmin(admin.ModelAdmin):
     actions = [fetch_data]
 
 admin.site.register(Extractor, ExtractorAdmin)
-admin.site.register(Provider)
+admin.site.register(Provider, ProviderAdmin)
 admin.site.register(PublishingChannel, PublishingChannelAdmin)
 admin.site.register(Episode)
 admin.site.register(UserSubscription)

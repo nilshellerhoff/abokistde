@@ -1,3 +1,5 @@
+from typing import List
+
 from abokistde.models import PublishingChannel, Episode, User, Provider, Extractor
 import xmltodict
 import requests
@@ -15,12 +17,12 @@ class Youtube:
             )
         )
         
-    def searchChannel(self, query):
+    def searchChannel(self, query: str) -> List[PublishingChannel]:
         try:
-            inserted_ids = []
+            search_results: List[PublishingChannel] = []
             j = JsonScraper()
             for channel in j.searchChannel(query):
-                obj, created = PublishingChannel.objects.update_or_create(
+                obj, _ = PublishingChannel.objects.update_or_create(
                     channel_id = channel["channel_id"],
                     defaults = dict(
                         name = channel["name"],
@@ -29,9 +31,9 @@ class Youtube:
                         thumbnail_url = channel["thumbnail_url"]
                     )
                 )
-                inserted_ids.append(obj.id)
+                search_results.append(obj)
 
-            return inserted_ids
+            return search_results
         except Exception as e:
             print(e)
             return []

@@ -18,11 +18,11 @@ import uuid
 
 from django.views.decorators.csrf import csrf_exempt
 
-from . import sites_wrapper 
+from . import sites_wrapper
+
 
 @csrf_exempt
 def videos(request):
-
     print(request.user)
     print(request.user.id)
 
@@ -59,16 +59,16 @@ WHERE u.id = %s
     channels = PublishingChannel.objects.filter(id__in=[c.id for c in channels_ids])
     channels_list = list(channels.values())
 
-    for c1,c2 in zip(channels_list, channels):
+    for c1, c2 in zip(channels_list, channels):
         c1['rowid'] = c2.id
         c1['thumbnail'] = c2.thumbnail_url
         c1['video_page_url'] = c2.url
-        
+
     # provider_favicons = { 'youtube': 'https://www.youtube.com/s/desktop/9528aa7e/img/favicon_32.png' }
     providers = Provider.objects.all()
     provider_names = [p.extractor.name for p in providers]
     provider_icons = [p.icon_url for p in providers]
-    provider_favicons = { k: v for (k,v) in zip(provider_names, provider_icons)}
+    provider_favicons = {k: v for (k, v) in zip(provider_names, provider_icons)}
     results = {
         'videos': videos_list,
         'channels': channels_list,
@@ -76,10 +76,12 @@ WHERE u.id = %s
     }
     return JsonResponse(results)
 
+
 @csrf_exempt
 def fetch_youtube(request):
     sites_wrapper.getNewEpisodes()
     return HttpResponseRedirect('/')
+
 
 @csrf_exempt
 def user_login(request):
@@ -102,6 +104,7 @@ def user_login(request):
         }
         return JsonResponse(response, status=400)
 
+
 @csrf_exempt
 def user_logout(request):
     logout(request)
@@ -111,6 +114,7 @@ def user_logout(request):
     }
     return JsonResponse(response, status=200)
 
+
 @csrf_exempt
 def user_checktoken(request):
     # check if user is logged in
@@ -118,6 +122,7 @@ def user_checktoken(request):
         return JsonResponse({"status": "error", "message": "Not logged in"}, status=401)
     else:
         return JsonResponse({"status": "success", "message": "Logged in"}, status=200)
+
 
 @csrf_exempt
 def user_add(request):
@@ -132,7 +137,7 @@ def user_add(request):
             "message": "Username already taken"
         }
         return JsonResponse(response, status=400)
-    
+
     # check if password is valid    
     try:
         # create user
@@ -157,20 +162,26 @@ def user_add(request):
         }
         return JsonResponse(response, status=400)
 
+
 @csrf_exempt
 def search_online(request):
     searchterm = request.GET.get('query')
-    ids_online = sites_wrapper.search(searchterm)
-    ids_local = [c.id for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
-    results = list(PublishingChannel.objects.filter(id__in=ids_online).values())
+    search_results = sites_wrapper.search(searchterm)
 
-    for r in results:
-        r['provider'] = {
-            "id": 82,
-            "name": "Youtube",
-            "url": "https://www.youtube.com/",
-            "icon_url": "https://www.youtube.com/s/desktop/5191a190/img/favicon_144x144.png"
+    # creating JSON response manually until this can be transferred to API
+    results = [{
+        "id": channel.id,
+        "name": channel.name,
+        "url": channel.url,
+        "description": channel.description,
+        "thumbnail_url": channel.thumbnail_url,
+        "provider": {
+            "id": channel.provider.id,
+            "name": channel.provider.name,
+            "url": channel.provider.url,
+            "icon_url": channel.provider.icon_url
         }
+    } for channel in search_results]
 
     return JsonResponse({
         "status": "success",
