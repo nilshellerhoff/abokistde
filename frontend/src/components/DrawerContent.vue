@@ -38,7 +38,7 @@
     <q-item-section>Feed</q-item-section>
   </q-item>
 
-  <div style="height: calc(100% - 104px - 46px)">
+  <div style="height: calc(100% - 104px - 2 * 48px)">
     <ChannelList />
   </div>
   <q-separator />
