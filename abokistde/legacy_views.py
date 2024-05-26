@@ -160,9 +160,9 @@ def user_add(request):
 @csrf_exempt
 def search_online(request):
     searchterm = request.GET.get('query')
-    ids_online = sites_wrapper.search(searchterm)
-    ids_local = [c.id for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
-    results = list(PublishingChannel.objects.filter(id__in=ids_online).values())
+    channels_episodes = sites_wrapper.search(searchterm)
+    new_channel_ids = [channel.id for channel in channels_episodes['channel']]
+    results = list(PublishingChannel.objects.filter(id__in=new_channel_ids).values())
 
     for r in results:
         r['provider'] = {

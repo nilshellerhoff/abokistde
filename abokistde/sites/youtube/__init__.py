@@ -1,3 +1,7 @@
+from __future__ import annotations
+
+from typing import List, TypedDict
+
 from abokistde.models import PublishingChannel, Episode, User, Provider, Extractor
 import xmltodict
 import requests
@@ -15,12 +19,12 @@ class Youtube:
             )
         )
         
-    def searchChannel(self, query):
+    def search_channel(self, query: str) -> TypedDict('ChannelEpisode', {'channel': List[PublishingChannel], 'episode': List[Episode]}):
         try:
-            inserted_ids = []
+            channels: List[PublishingChannel] = []
             j = JsonScraper()
-            for channel in j.searchChannel(query):
-                obj, created = PublishingChannel.objects.update_or_create(
+            for channel in j.search_channel(query):
+                channel, _ = PublishingChannel.objects.update_or_create(
                     channel_id = channel["channel_id"],
                     defaults = dict(
                         name = channel["name"],
@@ -29,17 +33,17 @@ class Youtube:
                         thumbnail_url = channel["thumbnail_url"]
                     )
                 )
-                inserted_ids.append(obj.id)
+                channels.append(channel)
+            return {"channel": channels, "episode": []}
 
-            return inserted_ids
         except Exception as e:
             print(e)
-            return []
+            return {"channel": [], "episode": []}
 
-    def getChannelInfo(self, url):
+    def get_channel_info(self, url: str) -> PublishingChannel:
         try:
             j = JsonScraper()
-            channel = j.getChannelDetails(url)
+            channel = j.get_channel_details(url)
             return PublishingChannel.objects.update_or_create(
                 channel_id = channel["channel_id"],
                 defaults= {
@@ -54,14 +58,14 @@ class Youtube:
             print(e)
             return None
 
-    def getVideos(self, channel):
+    def get_videos(self, channel: PublishingChannel) -> List[Episode]:
         """
         Returns the latest videos, currently 15 using the rss api
         """
         try:
-            rss = RssFeed(channel.channel_id)
+            rss_extractor = RssFeed(channel.channel_id)
             videos = []
-            for video in rss.getVideos():
+            for video in rss_extractor.getVideos():
                 videos.append(Episode.objects.update_or_create(
                     episode_id = video["video_id"],
                     defaults = dict(

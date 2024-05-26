@@ -1,8 +1,13 @@
+from __future__ import annotations
+
+from .types import Channel
+
 """
 Scraping YouTube using JSON embedded in the HTML
 
 When loading a YouTube page, the initial data is embedded in the HTML as JSON in the variable ytInitialData. We can use this to scrape the data we need, although in a somewhat limited way.
 """
+from typing import Dict, List
 
 import requests
 import json
@@ -14,10 +19,10 @@ __DIR__ = os.path.dirname(os.path.realpath(__file__))
 
 class JsonScraper:
     def __init__(self, cookies=None, headers=None):
-        self._setCookies(cookies)
-        self._setHeaders(headers)
+        self._set_cookies(cookies)
+        self._set_headers(headers)
 
-    def _setCookies(self, cookies):
+    def _set_cookies(self, cookies: Dict[str, str] = None):
         if cookies:
             self.cookies = cookies
         else:
@@ -29,7 +34,7 @@ class JsonScraper:
             for c in cookies_loaded:
                 self.cookies[c["Name raw"]] = c["Content raw"]
    
-    def _setHeaders(self, headers):
+    def _set_headers(self, headers: Dict[str, str] = None):
         if headers:
             self.headers = headers
         else:
@@ -38,31 +43,33 @@ class JsonScraper:
                 "Accept-Language" : "en-US,en;q=0.5"
             }
 
-    def getHtml(self):
+    def get_html(self):
         r = requests.get(self.url, headers=self.headers, cookies=self.cookies)
         # decode string sequences like \x22
         self.html = r.text
 
-    def decodeJson(self, json):
+    def decode_json(self, json_string: str):
+        """Decode a JSON string that is embedded in the HTML of a YouTube page"""
+
         # if the string starts with a single quote, we need to decode the string
-        if json[0] == "'":
-            json = json[1:-1]
+        if json_string[0] == "'":
+            json_string = json_string[1:-1]
             # json = json.encode('utf-8').decode('unicode_escape')
             # WHY Youtube?
-            json = json.encode('utf-8').decode('unicode_escape').encode('latin-1').decode('utf-8')
-            json.replace("\/", "/")
+            json_string = json_string.encode('utf-8').decode('unicode_escape').encode('latin-1').decode('utf-8')
+            json_string.replace("\/", "/")
 
-        return json
+        return json_string
 
-    def getJson(self):
-        self.getHtml()
-        initialData = self.html.split('var ytInitialData = ')[1].split(';</script>')[0].strip()
-        initialData = self.decodeJson(initialData)
-        self.json = NestedObject(json.loads(initialData))
+    def get_json(self):
+        self.get_html()
+        initial_data = self.html.split('var ytInitialData = ')[1].split(';</script>')[0].strip()
+        initial_data = self.decode_json(initial_data)
+        self.json = NestedObject(json.loads(initial_data))
 
-    def getChannelDetails(self, url):
+    def get_channel_details(self, url: str):
         self.url = url
-        self.getJson()
+        self.get_json()
 
         channel_id = self.json["responseContext"]["serviceTrackingParams"]['_["service"] == "GFEEDBACK"'][0]["params"]['_["key"] == "browse_id"'][0]["value"]
         # allVideosPlaylist = self.json["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"].filter(
@@ -83,12 +90,12 @@ class JsonScraper:
             "thumbnail_url": thumbnail_url,
         }
 
-    def searchChannel(self, query):
+    def search_channel(self, query: str) -> List[Channel]:
         """
         Perform a search on YouTube and return all the channels of all the videos
         """
         self.url = f"https://www.youtube.com/results?search_query={query}"
-        self.getJson()
+        self.get_json()
 
         sections = self.json["contents"]["sectionListRenderer"]["contents"].filter(lambda x: "itemSectionRenderer" in x.keys())
         channels = []
@@ -114,8 +121,8 @@ class JsonScraper:
                 by_line_text = video_item["videoWithContextRenderer"]["shortBylineText"]["runs"][0]
                 if by_line_text["text"] not in [c["name"] for c in channels]:
                     try:
-                        channelThumbnail = video_item["videoWithContextRenderer"]["channelThumbnail"]
-                        thumbnail = channelThumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0]["url"]
+                        channel_thumbnail = video_item["videoWithContextRenderer"]["channelThumbnail"]
+                        thumbnail = channel_thumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0]["url"]
                         channels.append({
                             "name": by_line_text["text"],
                             "url": "https://youtube.com/" + by_line_text["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],

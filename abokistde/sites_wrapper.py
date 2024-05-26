@@ -1,5 +1,7 @@
+from typing import Dict, TypedDict, List
+
 from abokistde.sites import youtube
-from .models import PublishingChannel, Extractor
+from .models import PublishingChannel, Extractor, Episode
 from abokistde.sites.youtube import Youtube
 from abokistde.sites.ardaudiothek import Ardaudiothek
 
@@ -13,26 +15,28 @@ def getNewEpisodes(channel_id=None):
     aa = Ardaudiothek()
     for channel in channels:
         if channel.provider.extractor.name == 'youtube':
-            yt.getVideos(channel)
+            yt.get_videos(channel)
         if channel.provider.extractor.name == 'ardaudiothek':
             aa.getEpisodes(channel)
 
 def getChannelInfo(url : str):
     """get the channel info from the given url"""
     youtube = Youtube()
-    return youtube.getChannelInfo(url)
+    return youtube.get_channel_info(url)
 
-def search(query : str):
+
+def search(query: str) -> TypedDict('ChannelEpisode', {'channel': List[PublishingChannel], 'episode': List[Episode]}):
     """Search for a query"""
     youtube = Youtube()
-    return youtube.searchChannel(query)
+    return youtube.search_channel(query)
+
 
 def fetch_data(extractor: Extractor):
     """Fetch data from the given extractor"""
     if extractor.name == 'youtube':
         yt = Youtube()
         for channel in getWatchedChannels():
-            yt.getVideos(channel)
+            yt.get_videos(channel)
     if extractor.name == 'ardaudiothek':
         aa = Ardaudiothek()
         aa.getChannels()
