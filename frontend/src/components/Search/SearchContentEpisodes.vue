@@ -7,12 +7,17 @@
     </q-item>
   </div>
 
-  <EpisodeListItem
-    v-for="episode in props.episodes"
-    :key="episode.id"
-    :episode="episode"
-    :width="200"
-  />
+  <div
+    class="q-gutter-md"
+    style="display: flex; justify-content: center; flex-wrap: wrap; width: 100%"
+  >
+    <EpisodeListItem
+      v-for="episode in props.episodes"
+      :key="episode.id"
+      :episode="episode"
+      :width="200"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">

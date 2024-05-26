@@ -22,6 +22,7 @@
           "
         >
           <q-btn
+            v-if="props.showFavoriteButton"
             size="12px"
             color="black"
             flat
@@ -32,6 +33,7 @@
             style="margin: 8px"
           /><br />
           <q-btn
+            v-if="showHideButtons"
             size="12px"
             color="black"
             flat
@@ -70,9 +72,16 @@ interface Props {
   episode?: Episode;
   showChannelHeader?: boolean;
   width?: number;
+  showHideButtons?: boolean;
+  showFavoriteButton?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showChannelHeader: false,
+  width: 300,
+  showHideButtons: true,
+  showFavoriteButton: true,
+});
 
 const date = props.episode?.published
   ? new Date(props.episode?.published)
