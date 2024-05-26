@@ -160,11 +160,15 @@ def user_add(request):
 @csrf_exempt
 def search_online(request):
     searchterm = request.GET.get('query')
-    ids_online = sites_wrapper.search(searchterm)
-    ids_local = [c.id for c in PublishingChannel.objects.filter(name__contains=searchterm, provider__extractor__name="youtube")]
-    results = list(PublishingChannel.objects.filter(id__in=ids_online).values())
+    channels_episodes = sites_wrapper.search(searchterm)
 
-    for r in results:
+    channel_ids = [channel.id for channel in channels_episodes['channel']]
+    channels = list(PublishingChannel.objects.filter(id__in=channel_ids).values())
+
+    episode_ids = [episode.id for episode in channels_episodes['episode']]
+    episodes = list(Episode.objects.filter(id__in=episode_ids).values())
+
+    for r in channels:
         r['provider'] = {
             "id": 82,
             "name": "Youtube",
@@ -174,5 +178,8 @@ def search_online(request):
 
     return JsonResponse({
         "status": "success",
-        "data": results
+        "data": {
+            "channels": channels,
+            "episodes": episodes
+        }
     })

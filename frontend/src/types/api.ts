@@ -75,3 +75,11 @@ export type SubscriptionCategory = {
 
 export type SubscriptionCategoryResponse =
   GenericPaginationResponse<SubscriptionCategory>;
+
+// -------- Search -------- //
+export type SearchOnlineResponse = {
+  data: {
+    channels: PublishingChannel[];
+    episodes: Episode[];
+  };
+};

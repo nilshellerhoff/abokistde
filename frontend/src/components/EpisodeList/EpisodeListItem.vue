@@ -22,6 +22,7 @@
           "
         >
           <q-btn
+            v-if="props.showFavoriteButton"
             size="12px"
             color="black"
             flat
@@ -32,6 +33,7 @@
             style="margin: 8px"
           /><br />
           <q-btn
+            v-if="showHideButtons"
             size="12px"
             color="black"
             flat
@@ -50,7 +52,11 @@
           style="font-weight: bold; font-size: 14px; padding: 4px"
           >{{ props.episode.title }}
         </q-item-label>
-        <q-item-label lines="1" style="font-size: 12px; padding: 4px">
+        <q-item-label
+          v-if="date"
+          lines="1"
+          style="font-size: 12px; padding: 4px"
+        >
           <timeago :datetime="date" />
         </q-item-label>
       </q-item-section>
@@ -66,11 +72,20 @@ interface Props {
   episode?: Episode;
   showChannelHeader?: boolean;
   width?: number;
+  showHideButtons?: boolean;
+  showFavoriteButton?: boolean;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  showChannelHeader: false,
+  width: 300,
+  showHideButtons: true,
+  showFavoriteButton: true,
+});
 
-const date = new Date(props.episode?.published ?? '');
+const date = props.episode?.published
+  ? new Date(props.episode?.published)
+  : undefined;
 </script>
 
 <style>
