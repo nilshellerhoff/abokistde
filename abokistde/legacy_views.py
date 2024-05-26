@@ -161,10 +161,14 @@ def user_add(request):
 def search_online(request):
     searchterm = request.GET.get('query')
     channels_episodes = sites_wrapper.search(searchterm)
-    new_channel_ids = [channel.id for channel in channels_episodes['channel']]
-    results = list(PublishingChannel.objects.filter(id__in=new_channel_ids).values())
 
-    for r in results:
+    channel_ids = [channel.id for channel in channels_episodes['channel']]
+    channels = list(PublishingChannel.objects.filter(id__in=channel_ids).values())
+
+    episode_ids = [episode.id for episode in channels_episodes['episode']]
+    episodes = list(Episode.objects.filter(id__in=episode_ids).values())
+
+    for r in channels:
         r['provider'] = {
             "id": 82,
             "name": "Youtube",
@@ -174,5 +178,8 @@ def search_online(request):
 
     return JsonResponse({
         "status": "success",
-        "data": results
+        "data": {
+            "channels": channels,
+            "episodes": episodes
+        }
     })

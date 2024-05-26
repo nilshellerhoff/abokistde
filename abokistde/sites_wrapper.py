@@ -28,7 +28,7 @@ def getChannelInfo(url : str):
 def search(query: str) -> TypedDict('ChannelEpisode', {'channel': List[PublishingChannel], 'episode': List[Episode]}):
     """Search for a query"""
     youtube = Youtube()
-    return youtube.search_channel(query)
+    return youtube.search(query)
 
 
 def fetch_data(extractor: Extractor):

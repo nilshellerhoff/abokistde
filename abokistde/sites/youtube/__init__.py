@@ -8,33 +8,53 @@ import requests
 from .jsonscraper import JsonScraper
 from .rss import RssFeed
 
+
 class Youtube:
     def __init__(self):
         self.provider, created = Provider.objects.update_or_create(
-            name = "Youtube",
-            defaults = dict(
-                url = "https://www.youtube.com/",
-                icon_url = "https://www.youtube.com/s/desktop/5191a190/img/favicon_144x144.png",
-                extractor = Extractor.objects.get(name='youtube')
+            name="Youtube",
+            defaults=dict(
+                url="https://www.youtube.com/",
+                icon_url="https://www.youtube.com/s/desktop/5191a190/img/favicon_144x144.png",
+                extractor=Extractor.objects.get(name='youtube')
             )
         )
-        
-    def search_channel(self, query: str) -> TypedDict('ChannelEpisode', {'channel': List[PublishingChannel], 'episode': List[Episode]}):
+
+    def search(self, query: str) -> TypedDict('ChannelEpisode',
+                                              {'channel': List[PublishingChannel], 'episode': List[Episode]}):
         try:
             channels: List[PublishingChannel] = []
+            episodes: List[Episode] = []
+
             j = JsonScraper()
-            for channel in j.search_channel(query):
-                channel, _ = PublishingChannel.objects.update_or_create(
-                    channel_id = channel["channel_id"],
-                    defaults = dict(
-                        name = channel["name"],
-                        url = channel["url"],
-                        provider = self.provider,
-                        thumbnail_url = channel["thumbnail_url"]
+            results_channels, results_episodes = j.search_channel(query)
+
+            for channel in results_channels:
+                channel_obj, _ = PublishingChannel.objects.update_or_create(
+                    channel_id=channel["channel_id"],
+                    defaults=dict(
+                        name=channel["name"],
+                        url=channel["url"],
+                        provider=self.provider,
+                        thumbnail_url=channel["thumbnail_url"]
                     )
                 )
-                channels.append(channel)
-            return {"channel": channels, "episode": []}
+                channels.append(channel_obj)
+
+            for episode in results_episodes:
+                episode_obj, _ = Episode.objects.update_or_create(
+                    episode_id=episode["episode_id"],
+                    defaults={
+                        "publishing_channel": PublishingChannel.objects.get(channel_id=episode["channel_id"]),
+                        "title": episode["title"],
+                        "url": episode["url"],
+                        "thumbnail_url": episode["thumbnail_url"],
+                        "type": "video"
+                    }
+                )
+                episodes.append(episode_obj)
+
+            return {"channel": channels, "episode": episodes}
 
         except Exception as e:
             print(e)
@@ -45,8 +65,8 @@ class Youtube:
             j = JsonScraper()
             channel = j.get_channel_details(url)
             return PublishingChannel.objects.update_or_create(
-                channel_id = channel["channel_id"],
-                defaults= {
+                channel_id=channel["channel_id"],
+                defaults={
                     "name": channel["name"],
                     "description": channel["description"],
                     "url": channel["url"],
@@ -67,18 +87,18 @@ class Youtube:
             videos = []
             for video in rss_extractor.getVideos():
                 videos.append(Episode.objects.update_or_create(
-                    episode_id = video["video_id"],
-                    defaults = dict(
-                        publishing_channel = channel,
-                        title = video["title"],
-                        url = video["url"],
-                        thumbnail_url = video["thumbnail_url"],
-                        description = video["description"],
-                        published = video["published"],
-                        type = "video",
+                    episode_id=video["video_id"],
+                    defaults=dict(
+                        publishing_channel=channel,
+                        title=video["title"],
+                        url=video["url"],
+                        thumbnail_url=video["thumbnail_url"],
+                        description=video["description"],
+                        published=video["published"],
+                        type="video",
                     )
                 )[0])
-            
+
             return videos
         except Exception as e:
             print(e)

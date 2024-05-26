@@ -50,7 +50,11 @@
           style="font-weight: bold; font-size: 14px; padding: 4px"
           >{{ props.episode.title }}
         </q-item-label>
-        <q-item-label lines="1" style="font-size: 12px; padding: 4px">
+        <q-item-label
+          v-if="date"
+          lines="1"
+          style="font-size: 12px; padding: 4px"
+        >
           <timeago :datetime="date" />
         </q-item-label>
       </q-item-section>
@@ -70,7 +74,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const date = new Date(props.episode?.published ?? '');
+const date = props.episode?.published
+  ? new Date(props.episode?.published)
+  : undefined;
 </script>
 
 <style>

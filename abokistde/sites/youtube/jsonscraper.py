@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .types import Channel
+from .types import Channel, YtEpisode
 
 """
 Scraping YouTube using JSON embedded in the HTML
@@ -17,6 +17,7 @@ from .nestedobject import NestedObject
 
 __DIR__ = os.path.dirname(os.path.realpath(__file__))
 
+
 class JsonScraper:
     def __init__(self, cookies=None, headers=None):
         self._set_cookies(cookies)
@@ -29,18 +30,18 @@ class JsonScraper:
             cookiepath = os.path.join(__DIR__, "jsonscraper-cookies.json")
             with open(cookiepath, "r") as f:
                 cookies_loaded = json.load(f)
-            
+
             self.cookies = {}
             for c in cookies_loaded:
                 self.cookies[c["Name raw"]] = c["Content raw"]
-   
+
     def _set_headers(self, headers: Dict[str, str] = None):
         if headers:
             self.headers = headers
         else:
             self.headers = {
-                "User-Agent" : "Mozilla/5.0 (Linux; Android 8.0.0; PRA-LX3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36",
-                "Accept-Language" : "en-US,en;q=0.5"
+                "User-Agent": "Mozilla/5.0 (Linux; Android 8.0.0; PRA-LX3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.101 Mobile Safari/537.36",
+                "Accept-Language": "en-US,en;q=0.5"
             }
 
     def get_html(self):
@@ -71,14 +72,15 @@ class JsonScraper:
         self.url = url
         self.get_json()
 
-        channel_id = self.json["responseContext"]["serviceTrackingParams"]['_["service"] == "GFEEDBACK"'][0]["params"]['_["key"] == "browse_id"'][0]["value"]
+        channel_id = self.json["responseContext"]["serviceTrackingParams"]['_["service"] == "GFEEDBACK"'][0]["params"][
+            '_["key"] == "browse_id"'][0]["value"]
         # allVideosPlaylist = self.json["contents"]["twoColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"].filter(
         #     lambda x: x["itemSectionRenderer"]["contents"][0]["shelfRenderer"] and x["itemSectionRenderer"]["contents"][0]["shelfRenderer"]["title"]["runs"][0]["text"] == "Videos"
         # )[0]["itemSectionRenderer"]["contents"][0]["shelfRenderer"]["playAllButton"]["buttonRenderer"]["navigationEndpoint"]["watchEndpoint"]["playlistId"]
 
         name = self.json["metadata"]["channelMetadataRenderer"]["title"]
         description = self.json["metadata"]["channelMetadataRenderer"]["description"]
-        url = self.json["metadata"]["channelMetadataRenderer"]["channelUrl"] # with channel id
+        url = self.json["metadata"]["channelMetadataRenderer"]["channelUrl"]  # with channel id
         # url = self.json["metadata"]["channelMetadataRenderer"]["vanityChannelUrl"] # with handle
         thumbnail_url = self.json["metadata"]["channelMetadataRenderer"]["avatar"]["thumbnails"][-1]["url"]
 
@@ -90,27 +92,32 @@ class JsonScraper:
             "thumbnail_url": thumbnail_url,
         }
 
-    def search_channel(self, query: str) -> List[Channel]:
+    def search_channel(self, query: str) -> (List[Channel], List[YtEpisode]):
         """
         Perform a search on YouTube and return all the channels of all the videos
         """
         self.url = f"https://www.youtube.com/results?search_query={query}"
         self.get_json()
 
-        sections = self.json["contents"]["sectionListRenderer"]["contents"].filter(lambda x: "itemSectionRenderer" in x.keys())
+        sections = self.json["contents"]["sectionListRenderer"]["contents"].filter(
+            lambda x: "itemSectionRenderer" in x.keys())
         channels = []
+        episodes = []
 
         for section in sections:
             section = NestedObject(section)
-            channel_items = section["itemSectionRenderer"]["contents"].filter(lambda x: "compactChannelRenderer" in x.keys())
-            video_items = section["itemSectionRenderer"]["contents"].filter(lambda x: "videoWithContextRenderer" in x.keys())
+            channel_items = section["itemSectionRenderer"]["contents"].filter(
+                lambda x: "compactChannelRenderer" in x.keys())
+            video_items = section["itemSectionRenderer"]["contents"].filter(
+                lambda x: "videoWithContextRenderer" in x.keys())
 
             for idx, channel_item in enumerate(channel_items):
                 try:
                     renderer = channel_item["compactChannelRenderer"]
                     channels.append({
                         "name": renderer["displayName"]["runs"][0]["text"],
-                        "url": "https://youtube.com/" + renderer["navigationEndpoint"]["browseEndpoint"]["canonicalBaseUrl"],
+                        "url": "https://youtube.com/" + renderer["navigationEndpoint"]["browseEndpoint"][
+                            "canonicalBaseUrl"],
                         "channel_id": renderer["channelId"],
                         "thumbnail_url": renderer["thumbnail"]["thumbnails"][-1]["url"],
                     })
@@ -118,18 +125,38 @@ class JsonScraper:
                     pass
 
             for idx, video_item in enumerate(video_items):
+                # extracting channel information
                 by_line_text = video_item["videoWithContextRenderer"]["shortBylineText"]["runs"][0]
-                if by_line_text["text"] not in [c["name"] for c in channels]:
-                    try:
-                        channel_thumbnail = video_item["videoWithContextRenderer"]["channelThumbnail"]
-                        thumbnail = channel_thumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0]["url"]
+
+                try:
+                    channel_thumbnail = video_item["videoWithContextRenderer"]["channelThumbnail"]
+                    thumbnail = channel_thumbnail["channelThumbnailWithLinkRenderer"]["thumbnail"]["thumbnails"][0][
+                        "url"]
+
+                    if by_line_text["text"] not in [c["name"] for c in channels]:
                         channels.append({
                             "name": by_line_text["text"],
-                            "url": "https://youtube.com/" + by_line_text["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
+                            "url": "https://youtube.com/" +
+                                   by_line_text["navigationEndpoint"]["commandMetadata"]["webCommandMetadata"]["url"],
                             "channel_id": by_line_text["navigationEndpoint"]["browseEndpoint"]["browseId"],
                             "thumbnail_url": thumbnail,
                         })
-                    except:
-                        pass
 
-        return channels
+                    # extracting video information
+                    try:
+                        episodes.append({
+                            "title": video_item["videoWithContextRenderer"]["headline"]["runs"][0]["text"],
+                            "url": "https://youtube.com/watch?v=" + video_item["videoWithContextRenderer"][
+                                "videoId"],
+                            "episode_id": video_item["videoWithContextRenderer"]["videoId"],
+                            "thumbnail_url": video_item["videoWithContextRenderer"]["thumbnail"]["thumbnails"][-1][
+                                "url"],
+                            "channel_id": by_line_text["navigationEndpoint"]["browseEndpoint"]["browseId"],
+                        })
+                    except:
+                        print("Error extracting episode information")
+
+                except:
+                    print("Error extracting channel information")
+
+        return channels, episodes
