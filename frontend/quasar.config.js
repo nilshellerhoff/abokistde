@@ -148,7 +148,15 @@ module.exports = configure(function (/* ctx */) {
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
       // useFilenameHashes: true,
-      // extendGenerateSWOptions (cfg) {}
+      extendGenerateSWOptions(cfg) {
+        cfg.navigateFallbackDenylist = cfg.navigateFallbackDenylist || [];
+        cfg.navigateFallbackDenylist.push(
+          /\/admin\//,
+          /\/account\//,
+          /\/accounts\//,
+          /\/api\//
+        );
+      },
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
