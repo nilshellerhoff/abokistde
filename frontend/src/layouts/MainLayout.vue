@@ -23,10 +23,25 @@
     </q-drawer>
 
     <q-footer elevated class="lt-md">
-      <q-tabs>
-        <q-route-tab name="feed" icon="subscriptions" to="/feed" />
-        <q-route-tab name="favorites" icon="favorite" to="/favorites" />
-        <q-route-tab name="search" icon="search" to="/search" />
+      <q-tabs switch-indicator>
+        <q-route-tab
+          name="feed"
+          icon="subscriptions"
+          to="/feed"
+          class="q-pb-lg q-pt-sm"
+        />
+        <q-route-tab
+          name="favorites"
+          icon="favorite"
+          to="/favorites"
+          class="q-pb-lg q-pt-sm"
+        />
+        <q-route-tab
+          name="search"
+          icon="search"
+          to="/search"
+          class="q-pb-lg q-pt-sm"
+        />
       </q-tabs>
     </q-footer>
 
