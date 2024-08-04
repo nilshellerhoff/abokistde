@@ -10,11 +10,11 @@
         action="{% url 'django_registration_register' %}">
     {% csrf_token %}
 
-    <v-text-field
+    <input
             name="username"
-            label="Username"
+            placeholder="Username"
             type="text"
-    ></v-text-field>
+    >
 {#    <v-text-field#}
 {#            name="email"#}
 {#            label="Email (optional)"#}
@@ -22,24 +22,24 @@
 {#    >#}
 {#    </v-text-field>#}
     <input type="hidden" name="email" value="fake@example.org">
-    <v-text-field
+    <input
             name="password1"
-            label="Password"
+            placeholder="Password"
             type="password"
     >
-    </v-text-field>
-    <v-text-field
+    <input
             name="password2"
-            label="Repeat Password"
+            placeholder="Repeat Password"
             type="password"
     >
-    </v-text-field>
 
-    <v-btn type="submit" color="primary">Register</v-btn>
+    <button type="submit" style="color: #fff; background-color: var(--primary)">
+      Register
+    </button>
 
     <input type="hidden"
            name="next"
-           value="{{ next }}">
+           value="/accounts/login">
   </form>
 
   {# Assumes you set up the password_reset view in your URLconf #}

@@ -3,9 +3,11 @@
 {% block content %}
   {% if user.is_authenticated %}
     <p>Logged in as {{ user.get_username }}</p>
-    <v-btn
-            href="/accounts/logout/">Logout
-    </v-btn>
+    <a href="/accounts/logout/">
+      <button>
+        LOGOUT
+      </button>
+    </a>
   {% else %}
     {% if form.errors %}
       <p>Your username and password didn't match. Please try again.</p>
@@ -21,41 +23,36 @@
     {% endif %}
 
     <form method="post"
-          action="{% url 'login' %}">
+          action="{% url 'login' %}"
+    >
       {% csrf_token %}
 
-      <v-text-field
-              name="username"
-              label="Username"
-              type="text"
-      ></v-text-field>
-      <v-text-field
-              name="password"
-              label="Password"
-              type="password"
-      >
-      </v-text-field>
+      <div>
+        <input type="text"
+               name="username"
+               placeholder="Username"
+        >
+      </div>
+      <div>
+        <input type="password"
+               name="password"
+               placeholder="Password"
+        >
+      </div>
       <input type="hidden"
              name="next"
-             value="{{ next }}">
+             value="/accounts/login/">
 
-      <v-row class="px-4 py-2">
-        <v-btn
-                type="submit"
-                color="primary">Login
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-                href="{% url 'django_registration_register' %}">
-          Register
-        </v-btn>
-      </v-row>
+      <input type="submit"
+             value="LOGIN"
+             style="background-color: var(--primary); color: #fff"/>
+      <a href="{% url 'django_registration_register' %}">
+        <button style="float: right" type="button">
+          REGISTER
+        </button>
+      </a>
     </form>
-
-    <div class="pa-2">
-    </div>
   {% endif %}
-
 
   {# Assumes you set up the password_reset view in your URLconf #}
   {#    <p><a href="{% url 'password_reset' %}">Lost password?</a></p>#}
