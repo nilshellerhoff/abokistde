@@ -1,3 +1,4 @@
+from django.db.models import Subquery
 from django_filters import BooleanFilter, filterset
 from django_filters.rest_framework import FilterSet
 from rest_framework import viewsets, serializers, status
@@ -5,7 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from abokistde.models import Episode
+from abokistde.models import Episode, HiddenEpisode
 from api.views import publishing_channel
 from api.views.publishing_channel import PublishingChannelSerializer
 
@@ -43,7 +44,8 @@ class EpisodeFilter(FilterSet):
             if value:
                 queryset = queryset.filter(hiddenepisode__user=self.request.user)
             else:
-                queryset = queryset.exclude(hiddenepisode__user=self.request.user)
+                hidden_episodes = HiddenEpisode.objects.filter(user=self.request.user)
+                queryset = queryset.exclude(id__in=Subquery(hidden_episodes.values('episode_id')))
 
         return queryset
 
