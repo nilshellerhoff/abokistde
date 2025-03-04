@@ -169,5 +169,7 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 X_FRAME_OPTIONS = 'ALLOW-FROM http://localhost:9000'
 
+SESSION_SAVE_EVERY_REQUEST = True
+
 # import local settings
 from abokistde.local_settings import *
