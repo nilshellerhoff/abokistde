@@ -35,7 +35,7 @@
     :style="{ width: columnWrapperWidth + 'px', maxWidth: '100%' }"
   >
     <episode-list-item
-      v-for="episode in episodes"
+      v-for="episode in episodes.slice(0, 12)"
       :key="episode.id"
       :show-channel-header="props.showChannelHeader"
       :episode="episode"
@@ -193,8 +193,8 @@ const decreaseColumnNumber = () => {
 </script>
 
 <style>
-/*.episode-grid::after {
+.episode-grid::after {
   content: '';
   flex: auto;
-} */
+}
 </style>
