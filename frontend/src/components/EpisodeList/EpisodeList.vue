@@ -35,7 +35,7 @@
     :style="{ width: columnWrapperWidth + 'px', maxWidth: '100%' }"
   >
     <episode-list-item
-      v-for="episode in episodes"
+      v-for="episode in shownEpisodes"
       :key="episode.id"
       :show-channel-header="props.showChannelHeader"
       :episode="episode"
@@ -80,6 +80,7 @@ import LoadingIndicator from 'components/LoadingIndicator.vue';
 import { objectsDiffer } from 'src/util/object';
 import { useLocalSettingsStore } from 'stores/local-settings-store';
 import CardWidthSelector from 'components/EpisodeList/CardWidthSelector.vue';
+import { useQuasar } from 'quasar';
 
 interface Props {
   episodeApiParams?: any; // TODO
@@ -89,7 +90,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   showChannelHeader: true,
 });
-
+const $q = useQuasar();
 const localSettingsStore = useLocalSettingsStore();
 
 const isLoading = ref(0);
@@ -98,6 +99,14 @@ const pageSize = ref(48);
 const episodes: Ref<Episode[]> = ref([]);
 const showHidden = ref(false);
 const isEpisodesLeft = ref(true);
+
+const shownEpisodes = computed(() => {
+  if (showHidden.value) {
+    return episodes.value;
+  } else {
+    return episodes.value.filter((e) => !e.is_hidden);
+  }
+});
 
 const fetchEpisodes = () => {
   isLoading.value++;
@@ -132,11 +141,28 @@ const resetEpisodes = () => {
 
 const hideUnhideEpisode = (episode: Episode) => {
   const action = episode.is_hidden ? 'unhide' : 'hide';
+  const undoAction = episode.is_hidden ? 'hide' : 'unhide';
+  const message = episode.is_hidden ? 'Episode unhidden' : 'Episode hidden';
+
+  const undoHandler = () => {
+    apiClient.post(`/episode_user/${episode.id}/${undoAction}/`).then(() => {
+      episode.is_hidden = !episode.is_hidden;
+    });
+  };
+
   apiClient.post(`/episode_user/${episode.id}/${action}/`).then(() => {
     episode.is_hidden = !episode.is_hidden;
-    if (episode.is_hidden && !showHidden.value) {
-      episodes.value = episodes.value.filter((e) => e.id !== episode.id);
-    }
+    $q.notify({
+      type: 'positive',
+      message,
+      actions: [
+        {
+          label: 'Undo',
+          color: 'white',
+          handler: undoHandler,
+        },
+      ],
+    });
   });
 };
 
