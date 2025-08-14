@@ -3,6 +3,7 @@
     <q-btn flat icon="refresh" @click="loadEpisodes">
       <q-tooltip>Refresh</q-tooltip>
     </q-btn>
+    <q-toggle v-model="showShorts" name="show_shorts" label="Show shorts" />
     <q-toggle
       v-model="showHidden"
       label="Show hidden"
@@ -97,15 +98,21 @@ const isLoading = ref(0);
 const currentOffset = ref(0);
 const pageSize = ref(48);
 const episodes: Ref<Episode[]> = ref([]);
+const showShorts = ref(false);
 const showHidden = ref(false);
 const isEpisodesLeft = ref(true);
 
 const shownEpisodes = computed(() => {
-  if (showHidden.value) {
-    return episodes.value;
-  } else {
-    return episodes.value.filter((e) => !e.is_hidden);
+  let shownEpisodes = episodes.value;
+  if (!showHidden.value) {
+    shownEpisodes = shownEpisodes.filter((e) => !e.is_hidden);
   }
+  if (!showShorts.value) {
+    shownEpisodes = shownEpisodes.filter(
+      (e) => !e.url.match('https://www.youtube.com/shorts/.*')
+    );
+  }
+  return shownEpisodes;
 });
 
 const fetchEpisodes = () => {
