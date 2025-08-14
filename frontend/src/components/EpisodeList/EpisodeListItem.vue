@@ -44,6 +44,9 @@
             style="margin: 8px"
           />
         </div>
+        <template #loading>
+          <q-icon name="image" size="50px" />
+        </template>
       </q-img>
 
       <q-item-section>

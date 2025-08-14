@@ -3,7 +3,10 @@
     <q-item-section avatar>
       <q-avatar>
         <q-img :src="channel.thumbnail_url" referrerpolicy="no-referrer">
-          <template v-slot:error>
+          <template #error>
+            <q-icon name="person" />
+          </template>
+          <template #loading>
             <q-icon name="person" />
           </template>
         </q-img>
