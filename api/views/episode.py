@@ -1,13 +1,13 @@
 from django.db.models import Subquery
 from django_filters import BooleanFilter, filterset
+from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework import FilterSet
-from rest_framework import viewsets, serializers, status
+from rest_framework import viewsets, serializers, status, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from abokistde.models import Episode, HiddenEpisode
-from api.views import publishing_channel
 from api.views.publishing_channel import PublishingChannelSerializer
 
 
@@ -80,10 +80,11 @@ class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = EpisodeSerializer
     permission_classes = [IsAuthenticated]
     filterset_class = EpisodeFilter
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    ordering_fields = ['published']
+    ordering = ['-published']
 
-    def get_queryset(self):
-        return Episode.objects.order_by(
-            "-published").distinct()
+    queryset = Episode.objects.all()
 
     @action(detail=True, methods=['post'])
     def hide(self, request, pk=None):
@@ -103,16 +104,16 @@ class EpisodeViewSet(viewsets.ReadOnlyModelViewSet):
 
 
     @action(detail=True, methods=['post'])
-    def favorite(selfself, request, pk=None):
-        episode = selfself.get_object()
+    def favorite(self, request, pk=None):
+        episode = self.get_object()
         user = request.user
         if not user.favoriteepisode_set.filter(episode=episode).exists():
             user.favoriteepisode_set.create(episode=episode)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'])
-    def unfavorite(selfself, request, pk=None):
-        episode = selfself.get_object()
+    def unfavorite(self, request, pk=None):
+        episode = self.get_object()
         user = request.user
         if user.favoriteepisode_set.filter(episode=episode).exists():
             user.favoriteepisode_set.filter(episode=episode).delete()
